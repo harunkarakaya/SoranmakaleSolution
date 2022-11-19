@@ -1,0 +1,165 @@
+﻿@using Soranmakale.Entities
+@using Soranmakale.BusinessLayer
+@using Soranmakale.WebApp.Models
+
+@{
+    ViewBag.Title = "EnCokBegenilenMakaleler";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    MakaleManager makale_manager = new MakaleManager();
+
+    List<Makale> EBmakaleler = makale_manager.IQueryableList().OrderByDescending(x => x.Begenileri.Count).ToList();
+}
+
+<link href="~/Content/IndexTemplate/3DButton.css" rel="stylesheet" />
+<link href="~/Content/IndexTemplate/Anasayfa-makale.css" rel="stylesheet" />
+<link href="~/Content/IndexTemplate/Anasayfa-soru-anket.css" rel="stylesheet" />
+<link href="~/Content/IndexTemplate/CheckboxBootstrap.css" rel="stylesheet" />
+<link href="~/Content/IndexTemplate/ListeleButton.css" rel="stylesheet" />
+
+<div class="container">
+
+    <!--Soru,anket,makale butonları-->
+    <div class="row">
+
+        @if (CurrentSession.kullanici != null)
+        {
+            //Soru oluşturma sayfasına gidecek
+            <div class="col-md-5 col-md-push-0">
+                <a href="/Soru/Create"><button type="button" class="btn btn-warning btn-md btn3d"><i class="fa fa-question" aria-hidden="true"></i> Soru Sor</button></a>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-5 col-md-push-0">
+                <a href="/Home/Login"><button type="button" class="btn btn-warning btn-md btn3d"><i class="fa fa-question" aria-hidden="true"></i> Soru Sor</button></a>
+            </div>
+        }
+
+        @if (CurrentSession.kullanici != null)
+        {
+            <div class="col-md-3">
+                <a href="/Anket/Create"><button type="button" class="btn btn-danger btn-md btn3d"><i class="fa fa-pie-chart" aria-hidden="true"></i> Anket Oluştur</button></a>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-3">
+                <a href="/Home/Login"><button type="button" class="btn btn-danger btn-md btn3d"><i class="fa fa-pie-chart" aria-hidden="true"></i> Anket Oluştur</button></a>
+            </div>
+        }
+
+        @if (CurrentSession.kullanici != null)
+        {
+            <div class="col-md-1 col-md-push-2">
+                @if (CurrentSession.kullanici.YazarMi)
+                {
+                    <a href="/Makale/Create"><button style="margin:10px 0px 0px 45px;" type="button" class="btn btn-primary btn-md btn3d"><i class="fa fa-pencil" aria-hidden="true"></i> Makale Yaz</button></a>
+                }
+                else
+                {
+                    <a href="#"><button style="margin:10px 0px 0px 45px;" type="button" class="btn btn-primary btn-md btn3d"><i class="fa fa-pencil" aria-hidden="true"></i> Makale Yaz</button></a>
+
+                }
+            </div>
+        }
+        else
+        {
+            <div class="col-md-1 col-md-push-2">
+                <a href="/Home/Login"><button style="margin:10px 0px 0px 45px;" type="button" class="btn btn-primary btn-md btn3d"><i class="fa fa-pencil" aria-hidden="true"></i> Makale Yaz</button></a>
+            </div>
+        }
+    </div>
+    <p></p>
+
+    <!--İçerik tipi-->
+    <div class="row">
+        <div class="col-md-12">
+            <div style="background-color:#2c3e50;" class="alert" role="alert">
+                <h4 style="font-size:30px;margin:-10px;color:white" class="text-center">En Çok Beğenilen Makaleler</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+
+
+
+    <!--içerikler basılıyor-->
+    <div class="container col-md-9 col-sm-9">
+        @{
+            foreach (Makale m in EBmakaleler)
+            {
+                <div class="row">
+                    <div class="col-sm-12 contpost">
+                        <div class="row">
+                            <div class="col-md-12 PostTitle">
+                                <h3><a href="#" style="color:#2c3e50;"></a></h3>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-sm-4 col-md-4" style="margin-top:10px;">
+                                    <a href="/Home/Makale/@m.ID" class="thumbnail">
+                                        <img src="~/Images/dr-strange.jpg" style="height:200px;" />
+                                    </a>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="col-md-12" style="margin-top:10px;">
+                                        <div class="col-md-6">
+                                            <p style="margin-left:-43px;font-size:15px;">
+                                                Kategori : <span class="badge badge-info">@m.Kategori.KategoriAdi</span>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6 text-left">
+                                            <p class="text-right">
+                                                <i class="fa fa-calendar "></i> @m.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="height:170px;">
+                                        <h3 style="margin-top:0px;margin-top:70px;color:#2c3e50"><b><a href="/Home/Makale/@m.ID">@m.Baslik</a></b></h3>
+                                    </div>
+
+
+                                    <div class="col-md-12">
+                                        <div class="small p-2" style="margin-left:-30px;">
+                                            <p>
+                                                <i class="fa fa-user-circle"></i> @m.Sahibi.Ad
+                                                | <i class="fa fa-thumbs-up"></i> @m.Begenileri.Count Beğenilme
+                                                | <i class="fa fa-comment"></i> @m.Yorumlari.Count Yorum
+                                                | <i class="fa fa-eye"></i> @m.GoruntulenmeSayisi Görüntülenme
+
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+                        </div>
+                    </div>
+
+
+                </div>
+            }
+        }
+
+    </div>
+
+    <!--Yazar ol ve Top 10-->
+    <div class="container" style="margin-top:50px;">
+        <div class="col-md-3" style="margin-left:18px;margin-right:-10px;">
+            <img src="~/Images/Yazar olma böyle birşey olabilir.png" style="height:150px;width:240px;" />
+        </div>
+        <div class="row col-md-3">
+            @Html.Partial("_PartialTop10")
+        </div>
+    </div>
+</div>

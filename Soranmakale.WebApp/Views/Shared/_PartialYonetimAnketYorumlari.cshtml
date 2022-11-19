@@ -1,0 +1,25 @@
+﻿@using Soranmakale.Entities
+
+@model List<AnketinYorumu>
+
+@foreach (AnketinYorumu item in Model)
+{
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <p style="font-size:20px;"> @item.Sahibi.KullaniciAdi </p>
+        </div>
+        <div class="col-md-6">
+            <i class="fa fa-calendar"></i> @item.OlusturulmaTarihi <span class="glyphicon glyphicon-time"></span>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-10">
+            <p>@item.Icerik</p>
+        </div>
+        <div class="col-md-2">
+            <a href="/AnketinYorumu/Delete/@item.ID" class="btn btn-danger btn-xs pull-right" data-yorum-id="@item.ID" style="margin-top:-10px;"><i class="fa fa-trash"></i></a>
+        </div>
+    </div>
+    <br /><br /><br /><br /><br /><br />
+}
+

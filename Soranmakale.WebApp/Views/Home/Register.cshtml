@@ -1,0 +1,104 @@
+﻿@using Soranmakale.Entities.ViewModels
+
+@model RegisterViewModel
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clean Login Form a Flat Responsive Widget Template :: w3layouts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="Clean Login Form Responsive, Login Form Web Template, Flat Pricing Tables, Flat Drop-Downs, Sign-Up Web Templates, Flat Web Templates, Login Sign-up Responsive Web Template, Smartphone Compatible Web Template, Free Web Designs for Nokia, Samsung, LG, Sony Ericsson, Motorola Web Design" />
+
+    <!-- css dosyaları -->
+    <link href="~/Content/Login-Register/css/style.css" rel="stylesheet" />
+    <link href="~/Content/Login-Register/css/Login-write.css" rel="stylesheet" />
+    <link href="~/Content/Login-Register/css/font-awesome.min.css" rel="stylesheet" />
+
+    <style type="text/css">
+        .validation-summary-errors {
+            color: red;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+    </style>
+
+    </head>
+    <body>
+
+        <div class="container demo-1">
+            <div class="content">
+                <div id="large-header" class="large-header">   
+                    <h1><a href="/Home/YeniIcerikler" style="color:white">SORANMAKALE</a></h1>
+                    <div class="main-agileits">
+                        <!--form-stars-here-->
+                        <div class="form-w3-agile">
+                            <h2>KAYIT</h2>
+                            @Html.ValidationSummary(false)
+                                    @using (Html.BeginForm())
+                                    { 
+                                    <div class="form-sub-w3">
+                                        @*<input type="text" name="Username" placeholder="Kullanıcı Adı " required="" />*@
+                                        @Html.TextBoxFor(model => model.KullaniciAdi, new { @class = "form-sub-w3", placeholder = "Kullanıcı Adı" })
+                                        <div class="icon-w3">
+                                            <i class="fa fa-user" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                    <div class="form-sub-w3">
+                                        @*<input type="password" name="Password" placeholder="Şifre" required="" />*@
+                                        @Html.TextBoxFor(model => model.Sifre, new { @class = "form-sub-w3", placeholder = "Şifre" , type="password"})
+                                        <div class="icon-w3">
+                                            <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-sub-w3">
+                                        @*<input type="password" name="password" placeholder="şifre tekrar" required="" />*@
+                                        @Html.TextBoxFor(model => model.SifreTekrar, new { @class = "form-sub-w3", placeholder = "Şifre Tekrarı" ,type="password"})
+                                        <div class="icon-w3">
+                                            <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                    <div class="form-sub-w3">
+                                        @*<input type="text" name="Email" placeholder="E-mail" required="" />*@
+                                        @Html.TextBoxFor(model => model.Eposta, new { @class = "form-sub-w3", placeholder = "E-posta adresi" })
+                                        <div class="icon-w3">
+                                            <i class="fa fa-envelope" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                    <p class="p-bottom-w3ls1"><a class href="/Home/Login"> Giriş Yap</a></p>
+                                    <p> &nbsp;</p>
+                                    <div class="clear"></div>
+                                    <div class="submit-w3l">
+                                        <input type="submit" value="Kayıt Ol">
+                                    </div>
+                                    }
+                            <div class="social w3layouts">
+                                <div class="heading">
+                                    <div class="clear">
+
+                                    </div>
+                                </div>
+                                <div class="icons">
+                                    <div class="clear">
+                                        <div class="col-md-2"">
+
+                                        </div>  
+                                    </div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="copyright w3-agile">
+                        <p> <br /></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </body>
+</html>

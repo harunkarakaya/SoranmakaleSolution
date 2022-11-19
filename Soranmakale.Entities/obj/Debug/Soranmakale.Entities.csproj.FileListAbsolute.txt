@@ -1,0 +1,12 @@
+C:\Users\Harun\source\repos\SoranmakaleSolution\Soranmakale.Entities\bin\Debug\Soranmakale.Entities.dll
+C:\Users\Harun\source\repos\SoranmakaleSolution\Soranmakale.Entities\bin\Debug\Soranmakale.Entities.pdb
+C:\Users\Harun\source\repos\SoranmakaleSolution\Soranmakale.Entities\obj\Debug\Soranmakale.Entities.csprojResolveAssemblyReference.cache
+C:\Users\Harun\source\repos\SoranmakaleSolution\Soranmakale.Entities\obj\Debug\Soranmakale.Entities.csproj.CoreCompileInputs.cache
+C:\Users\Harun\source\repos\SoranmakaleSolution\Soranmakale.Entities\obj\Debug\Soranmakale.Entities.dll
+C:\Users\Harun\source\repos\SoranmakaleSolution\Soranmakale.Entities\obj\Debug\Soranmakale.Entities.pdb
+D:\Harun\source\repos\SoranmakaleSolution\Soranmakale.Entities\bin\Debug\Soranmakale.Entities.dll
+D:\Harun\source\repos\SoranmakaleSolution\Soranmakale.Entities\bin\Debug\Soranmakale.Entities.pdb
+D:\Harun\source\repos\SoranmakaleSolution\Soranmakale.Entities\obj\Debug\Soranmakale.Entities.csprojAssemblyReference.cache
+D:\Harun\source\repos\SoranmakaleSolution\Soranmakale.Entities\obj\Debug\Soranmakale.Entities.csproj.CoreCompileInputs.cache
+D:\Harun\source\repos\SoranmakaleSolution\Soranmakale.Entities\obj\Debug\Soranmakale.Entities.dll
+D:\Harun\source\repos\SoranmakaleSolution\Soranmakale.Entities\obj\Debug\Soranmakale.Entities.pdb

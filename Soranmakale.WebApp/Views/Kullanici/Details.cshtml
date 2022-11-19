@@ -1,0 +1,106 @@
+﻿@model Soranmakale.Entities.Kullanici
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4">
+        <div class="row">
+            <div>
+                <h2 style="color:forestgreen;margin-left:115px;"><i class="fa fa-user"></i> Kullanici Detayları</h2>
+                <br /><br /><br />
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.KullaniciAdi)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.KullaniciAdi)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Sifre)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Sifre)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Email)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Email)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Ad)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Ad)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Soyad)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Soyad)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.KayitTarihi)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.KayitTarihi)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.YazarMi)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.YazarMi)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.AdminMi)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.AdminMi)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.RutbePuani)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.RutbePuani)
+                    </dd>
+
+                </dl>
+            </div>
+            <p>
+                <div class="form-group">
+
+
+                 
+
+                    <div class="col-md-push-1 col-md-2">
+                        <a href="/Kullanici/Index" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-arrow-left"></span> Geri Dön</a>
+                    </div>
+
+                    <div class="col-md-3 col-md-push-4">
+                        <a href="/Kullanici/Edit/@Model.ID" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-edit"></span> Düzenle</a> &nbsp;
+                    </div>
+                </div>
+            </p>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,6 @@
+@font-face {
+  font-family: 'Sirin Stencil';
+  font-style: normal;
+  font-weight: 400;
+  src: local('SirinStencil'), local('SirinStencil-Regular'), url(http://fonts.gstatic.com/s/sirinstencil/v6/pRpLdo0SawzO7MoBpvowsNK3QcrPukUORAcUfbq6wog.woff2) format('woff2');
+}

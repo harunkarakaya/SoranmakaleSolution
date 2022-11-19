@@ -1,0 +1,176 @@
+﻿@using Soranmakale.Entities
+@using Soranmakale.BusinessLayer
+@using Soranmakale.WebApp.Models
+
+@{ 
+    KategoriManager kat_man = new KategoriManager();
+
+    List<Kategori> kategoriler = kat_man.List();
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Youtube">
+    <meta name="author" content="Johan">
+    <title>Soranmakale</title>
+
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+
+
+    <link href="~/Content/Template.css" rel="stylesheet" />
+    <link href="~/Content/Template-Bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/Layout/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+    <style>
+        .body{
+            background-color:#ff0000;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand point" id="menu-toggle"><i id="menu-toggle" class="fa fa-bars" aria-hidden="true"></i></a>
+            <a class="navbar-brand" href="#">Menü 
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+        <div class="container-fluid">
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/Home/YeniIcerikler"><span class="glyphicon glyphicon-home"></span> &nbsp;Ana Sayfa</a></li>
+                    <!--Yönetim Dropdown-->
+                    @if (CurrentSession.kullanici != null && CurrentSession.kullanici.AdminMi == true)
+                    {
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                Yönetim
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" style="list-style:none;">
+                                <li style="font-size:20px;margin:0px 0px -15px 0px;"><a href="/Kategori/Index" style="padding-top:20px;padding-bottom:20px;"><i class="fa fa-list"></i> Kategorileri Yönet</a></li>
+                                <hr />
+                                <li style="font-size:20px;margin:-15px 0px -10px 0px;"><a href="/Kullanici/Index" style="padding-top:20px;padding-bottom:20px;"><i class="fa fa-user"></i> Kullanıcıları Yönet</a></li>
+                                <hr />
+                                <li style="font-size:20px;margin:-15px 0px -10px 0px;"><a href="/Soru/Index" style="padding-top:20px;padding-bottom:20px;"><i class="fa fa-question"></i> Soruları Yönet</a></li>
+                                <hr />
+                                <li style="font-size:20px;margin:-15px 0px -10px 0px;"><a href="/Anket/Index" style="padding-top:20px;padding-bottom:20px;"><i class="fa fa-pie-chart"></i> Anketleri Yönet</a></li>
+                                <hr />
+                                <li style="font-size:20px;margin:-15px 0px 0px 0px;"><a href="/Makale/Index" style="padding-top:20px;padding-bottom:20px;"><i class="fa fa-pencil"></i> Makaleleri Yönet</a></li>
+                            </ul>
+                        </li>
+                    }
+
+                    
+                </ul>
+
+                <!--Arama çubuğu-->
+                <div class="col-sm-3 col-md-3" style="margin-top:7px;">
+                    @using (Html.BeginForm("ArananKelime", "Home", FormMethod.Get))
+                    {
+                        <form class="navbar-form" role="search">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Arama" name="aranan" value="">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                                </div>
+                            </div>
+                        </form>
+                    }
+
+                </div>
+
+                            <ul class="navbar-form navbar-right">
+                                @if (CurrentSession.kullanici != null)
+                                {
+                                    <a href="/Home/Profil" class="btn btn-xs btn-info">
+                                        <i class="fa fa-user fa-2x"></i> @CurrentSession.kullanici.KullaniciAdi
+                                    </a>
+
+                                    <a href="/Home/Logout" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-log-out"></span> &nbsp;Çıkış Yap</a>
+                                }
+                                else
+                                {
+                                    <a href="/Home/Login" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-log-in"></span> &nbsp;Giriş Yap</a>
+                                    <a href="/Home/Register" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-log-out"></span> &nbsp;Kayıt Ol</a>
+                                }
+
+                                
+                            </ul>
+                    </div>
+                </div>
+                <div id="wrapper">
+                    <div id="sidebar-wrapper">
+                        <ul class="sidebar-nav">
+                            <li>
+                                <a class="" href="/Home/EnCokGoruntulenenler"><span class="glyphicon glyphicon-sort-by-attributes-alt"></span> En çok görüntülenenler</a>
+                            </li>
+                            <li>
+                                <a class="" href="/Home/EnCokBegenilenMakaleler"><span class="glyphicon glyphicon-thumbs-up"></span> En çok beğenilen makaleler</a>
+                            </li>
+                            <li>
+                                <a class="" href="/Home/YeniIcerikler"><span class="glyphicon glyphicon-certificate"></span> Yeni İçerikler</a>
+                            </li>
+                            <hr />
+                            <h4 class="text-center text-success">
+
+                                KATEGORİLER
+                            </h4>
+                            <li>
+                                <a href="/Home/YeniIcerikler"><img src="//i.ytimg.com/i/-9-kyTW8ZkZNDHQJ6FgpwQ/1.jpg" class="avatar-xs"> Tümü</a>
+                            </li>
+
+                            @foreach (Kategori kat in kategoriler)
+                            {
+                                <li>
+                                    <a href="/Home/KategoriFiltreleme/@kat.ID"><img src="//i.ytimg.com/i/-9-kyTW8ZkZNDHQJ6FgpwQ/1.jpg" class="avatar-xs"> @kat.KategoriAdi</a>
+                                </li>
+                                }
+
+                            @*<li>
+                                <a href="#"><img src="//i.ytimg.com/i/Egdi0XIXXZ-qJOFPf4JSKw/1.jpg" class="avatar-xs">  Spor</a>
+                            </li>
+                            <li>
+                                <a href="#"><img src="//i.ytimg.com/i/OpNcN46UbXVtpKMrmU4Abg/1.jpg" class="avatar-xs">  Oyun</a>
+                            </li>
+                            <li>
+                                <a href="#"><img src="//i.ytimg.com/i/lgRkhTL3_hImCAmdLfDE4g/1.jpg" class="avatar-xs">  Film</a>
+                            </li>*@
+
+                            <hr />
+
+                            </p>
+                        </ul>
+                    </div>
+                </div>
+</nav>
+
+    @RenderBody()
+
+    <script>
+
+
+        $(function () {
+
+            $("#menu-toggle").click(function (e) {
+                e.preventDefault();
+                $("#wrapper").toggleClass("toggled");
+            });
+        });
+    </script>
+
+
+</body>
+</html>

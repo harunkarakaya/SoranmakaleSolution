@@ -1,0 +1,861 @@
+﻿@using Soranmakale.WebApp.Models
+@using Soranmakale.BusinessLayer
+@using Soranmakale.Entities
+@using System.Data.Entity;
+
+@model Kullanici
+
+@{
+    ViewBag.Title = "Favoriler";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/IndexTemplate/Anasayfa-makale.css" rel="stylesheet" />
+<link href="~/Content/IndexTemplate/Anasayfa-soru-anket.css" rel="stylesheet" />
+<link href="~/Content/IndexTemplate/3DButton.css" rel="stylesheet" />
+
+
+
+@{
+    FavArticleManager fam = new FavArticleManager();
+    FavSurveyManager fsm = new FavSurveyManager();
+    FavQuestionManager fqm = new FavQuestionManager();
+
+
+    List<FavlananMakale> makaleler = fam.IQueryableList().Where(x => x.FavKisi.ID == Model.ID).ToList();
+    List<FavlananAnket> anketler = fsm.IQueryableList().Where(x => x.FavKisi.ID == Model.ID).ToList();
+    List<FavlananSoru> sorular = fqm.IQueryableList().Where(x => x.FavKisi.ID == Model.ID).ToList();
+
+
+    if (sorular.Count > 0)
+    {
+        sorular.Reverse();
+    }
+    if (anketler.Count > 0)
+    {
+        anketler.Reverse();
+    }
+    if (makaleler.Count > 0)
+    {
+        makaleler.Reverse();
+    }
+
+
+
+}
+<link href="~/Content/Profil/Profil.css" rel="stylesheet" />
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 text-center ">
+            <div class="panel panel-default">
+                <div class="userprofile social" style="padding-bottom:80px;">
+                    <div class="userpic" style="margin-top:20px;"> <img src="~/Images/@Model.ProfilFotografi" alt="" class="userpicimg"> </div>
+                    <br />
+                    <h2 class="username" style="margin-top:50px;font-size:30px;padding-bottom:30px;"><b>@Model.Ad @Model.Soyad</b></h2>
+
+                </div>
+
+                <!--Kişinin oluşturduğu anket makale soru sayılarını gösteriyor-->
+                <div class="col-md-12 border-top border-bottom">
+                    <ul class="nav nav-pills pull-left countlist" role="tablist">
+                        <li role="presentation">
+                            <h3>
+                                @if (sorular.Count > 0 && Model.Sorulari != null)
+                                {
+                                    @sorular.Count
+                                }
+
+                                else
+                                {
+                                    <p>0</p>
+                                }
+                                <br>
+
+                                <small>Sorularım</small>
+                            </h3>
+                        </li>
+                        <li role="presentation">
+                            <h3>
+                                @if (anketler.Count > 0 && Model.Anketleri != null)
+                                {
+                                    @anketler.Count
+                                }
+                                else
+                                {
+                                    <p>0</p>
+                                }<br>
+
+                                <small>Anketlerim</small>
+                            </h3>
+                        </li>
+                        <li role="presentation">
+                            <h3>
+                                @if (makaleler.Count > 0 && Model.Makaleleri != null)
+                                {
+                                    @makaleler.Count
+                                }
+                                else
+                                {
+                                    <p>0</p>
+                                }<br>
+                                <small>Makalelerim</small>
+                            </h3>
+                        </li>
+                    </ul>
+                    <a href="/Home/Favoriler" class="btn btn-danger followbtn">Favorilerim</a>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <!-- /.col-md-12 -->
+        <div class="col-md-4 col-sm-12 pull-right">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="page-header small" style="margin-top:0px;">Profil Bilgilerim</h1>
+                    <p class="page-subtitle small"><b>Kullanıcı Adı:</b> @Model.KullaniciAdi</p>
+                    <p class="page-subtitle small"><b>Ad:</b> @Model.Ad</p>
+                    <p class="page-subtitle small"><b>soyad:</b> @Model.Soyad</p>
+                    <p class="page-subtitle small"><b>Rütbe Puanı:</b> @Model.RutbePuani</p>
+
+                    @{
+
+                        if (Model.AdminMi)
+                        {
+                            <p class="page-subtitle small"><b>Yetki Durumu:</b> Admin</p>
+                        }
+                        else if (Model.YazarMi)
+                        {
+                            <p class="page-subtitle small"><b>Yetki Durumu:</b> Yazar</p>
+                        }
+                        else
+                        {
+                            <p class="page-subtitle small"><b>Yetki Durumu:</b> Üye</p>
+                        }
+                    }
+                    <button class="btn btn-info btn-xs"><a href="/Home/ProfilDuzenleme" style="color:white;">Güncelle</a></button>
+                </div>
+
+                <div class="clearfix"> </div>
+            </div>
+            <div class="panel panel-default  text-center">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-3" style="margin-left:35px;margin-top:40px;">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title text-center">En çok beğenilen 5 makalem</h3>
+                                    <div class="pull-right">
+                                    </div>
+                                </div>
+                                <table class="table table-hover" id="dev-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Makale Adı</th>
+                                            <th>Beğeni Sayısı</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="panel panel-default  text-center">
+                <div class="container">
+                    <div class="col-md-3" style="margin-left:0px;margin-top:40px;">
+                        <div class="panel panel-success" style="width:300px;">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">En çok görüntülenen 5 sorularım</h3>
+                            </div>
+                            <table class="table table-hover" id="task-table">
+                                <thead>
+                                    <tr>
+                                        <th>Soru Adı</th>
+                                        <th>Görüntülenme</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+
+
+            <div class="panel panel-default">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-3" style="margin-left:35px;margin-top:40px;">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title text-center">En çok katılım olan 5 anketim</h3>
+                                    <div class="pull-right">
+                                    </div>
+                                </div>
+                                <table class="table table-hover" id="dev-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Anket Adı</th>
+                                            <th>Katılım Sayısı</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+
+
+
+        </div>
+        <div class="col-md-8 col-sm-12 pull-left posttimeline">
+            @*<h2 style="font-size:50px;color:darkred;margin-left:250px;">Favorilerim</h2>*@
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="status-upload nopaddingbtm" style="margin-top:-20px;">
+                        <form class="text-center" style="">
+                            <h2 style="font-size:50px;color:darkred;">Favorilerim</h2>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+
+                @{
+                    int sorularinSayisi, anketlerinSayisi, makalelerinSayisi, soruSirasi = 0, anketSirasi = 0, makaleSirasi = 0;
+
+                    makalelerinSayisi = makaleler.Count();
+                    sorularinSayisi = sorular.Count();
+                    anketlerinSayisi = anketler.Count();
+
+                    int basacagiIcerikSayisi = makalelerinSayisi + sorularinSayisi + anketlerinSayisi;
+
+                    Soru s = new Soru();
+                    Anket a = new Anket();
+                    Makale m = new Makale();
+
+                    if (sorular.Count > 0)
+                    {
+                        s = sorular[soruSirasi].Soru;
+                    }
+                    if (anketler.Count > 0)
+                    {
+                        a = anketler[anketSirasi].Anket;
+                    }
+                    if (makaleler.Count > 0)
+                    {
+                        m = makaleler[makaleSirasi].Makale;
+                    }
+
+
+
+                    for (int i = 0; i < basacagiIcerikSayisi; i++)
+                    {
+
+                        if (soruSirasi < sorularinSayisi)
+                        {
+                            s = sorular[soruSirasi].Soru;
+
+                        }
+                        if (makaleSirasi < makalelerinSayisi)
+                        {
+                            m = makaleler[makaleSirasi].Makale;
+
+                        }
+
+                        if (anketSirasi < anketlerinSayisi)
+                        {
+                            a = anketler[anketSirasi].Anket;
+
+                        }
+
+
+                        if (soruSirasi < sorularinSayisi && makaleSirasi < makalelerinSayisi && anketSirasi < anketlerinSayisi)
+                        {
+
+                            if (s.OlusturulmaTarihi >= m.OlusturulmaTarihi && s.OlusturulmaTarihi >= a.OlusturulmaTarihi)
+                            {
+                                soruSirasi = soruSirasi + 1;
+
+                                //Partial'lara alınacaklar
+
+                                <div class="col-sm-11 col-md-11">
+                                    <div id="tb-testimonial" class="testimonial testimonial-warning">
+                                        <div class="col-md-2 testimonial-desc ">
+                                            <img src="~/Images/help.png" />
+                                        </div>
+
+                                        <div class="testimonial-section col-md-9 table-bordered pull-right" style="padding-bottom:5px;">
+                                            <div class="row text-center">
+                                                <h3 style="margin-top:0px; color:#2c3e50"><a href="/Home/Soru/@s.ID">@s.Baslik</a></h3>
+                                            </div>
+                                            @if (string.IsNullOrEmpty(s.Icerik) == false && s.Icerik.Length > 47)
+                                            {
+                                                <p>@(s.Icerik.Substring(0, 47) + " . . . ")</p>
+                                                <p class="pull-right">
+                                                    <a href="/Home/Soru/@s.ID" class="btn btn-warning btn-sm">devamı <span class="glyphicon glyphicon-chevron-right"></span></a>
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <p>@s.Icerik</p>
+                                            }
+                                        </div>
+                                        <br />
+                                        <div class="row text-center">
+                                            <div class="col-md-12 small p-2 col-md-push-2">
+                                                <p>
+                                                    <i class="fa fa-comment"></i> @s.Yorumlari.Count Yorum
+                                                    | <i class="fa fa-eye"></i> @s.GoruntulenmeSayisi Görüntülenme
+                                                    | Kategori : <span class="badge badge-info">@s.Kategori.KategoriAdi</span>
+                                                    | <i class="fa fa-calendar"></i> @s.OlusturulmaTarihi <i class="fa fa-clock-o"></i>
+
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            }
+                            else if (m.OlusturulmaTarihi >= s.OlusturulmaTarihi && m.OlusturulmaTarihi >= a.OlusturulmaTarihi)
+                            {
+                                makaleSirasi = makaleSirasi + 1;
+
+                                //Partial'lara alınacaklar
+                                <div class="row">
+                                    <div class="col-sm-11 contpost">
+                                        <div class="row">
+                                            <div class="col-md-12 PostTitle">
+                                                <h3><a href="#" style="color:#2c3e50;"></a></h3>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="col-sm-4 col-md-4" style="margin-top:10px;">
+                                                    <a href="/Home/Makale/@m.ID" class="thumbnail">
+                                                        <img src="~/Images/Makale/makale.png" style="height:200px;" />
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="col-md-12" style="margin-top:10px;">
+                                                        <div class="col-md-5">
+                                                            <p style="margin-left:-43px;font-size:15px;">
+                                                                Kategori : <span class="badge badge-info">@m.Kategori.KategoriAdi</span>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-md-7 text-left">
+                                                            <p class="text-right">
+                                                                <i class="fa fa-calendar "></i> @m.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" style="height:170px;">
+                                                        <h3 style="margin-top:0px;margin-top:70px;color:#2c3e50"><b><a href="/Home/Makale/@m.ID">@m.Baslik</a></b></h3>
+                                                    </div>
+
+
+                                                    <div class="col-md-12">
+                                                        <div class="small p-2" style="margin-left:-30px;">
+                                                            <p>
+                                                                <i class="fa fa-thumbs-up"></i> @m.Begenileri.Count Beğenilme
+                                                                | <i class="fa fa-comment"></i> @m.Yorumlari.Count Yorum
+                                                                | <i class="fa fa-eye"></i> @m.GoruntulenmeSayisi Görüntülenme
+
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+
+                                        </div>                                   
+                                    </div>
+
+
+                                </div>
+                            }
+                            else if (a.OlusturulmaTarihi >= s.OlusturulmaTarihi && a.OlusturulmaTarihi >= m.OlusturulmaTarihi)
+                            {
+                                anketSirasi = anketSirasi + 1;
+
+                                //Partial'lara alınacaklar
+                                <div class="col-sm-11 col-md-11">
+                                    <div id="tb-testimonial" class="testimonial testimonial-success">
+
+                                        <div class="col-md-2 testimonial-desc" style="margin-top:-20px; ">
+
+                                            <img src="~/Images/anket-1.png" />
+
+                                        </div>
+                                        <div class="testimonial-section col-md-9 table-bordered pull-right">
+                                            <div class="row text-center">
+                                                <h3 style="margin-top:0px;margin-bottom:0px; color:#2c3e50;"><a href="/Home/Anket/@a.ID">@a.Baslik</a></h3>
+                                            </div>
+                                        </div>
+
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-12 small p-2 text-center col-md-push-2">
+                                                <p>
+                                                    <i class="fa fa-comment"></i> @a.Yorumu.Count Yorum
+                                                    | <i class="fa fa-eye"></i> @a.GoruntulenmeSayisi Görüntülenme
+                                                    | Kategori : <span class="badge badge-info">@a.Kategori.KategoriAdi</span>
+                                                    | <i class="fa fa-calendar"></i> @a.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+
+                                                </p>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else if (soruSirasi < sorularinSayisi && makaleSirasi < makalelerinSayisi)
+                        {
+
+                            if (s.OlusturulmaTarihi >= m.OlusturulmaTarihi)
+                            {
+                                soruSirasi = soruSirasi + 1;
+
+                                <div class="col-sm-11 col-md-11">
+                                    <div id="tb-testimonial" class="testimonial testimonial-warning">
+                                        <div class="col-md-2 testimonial-desc ">
+                                            <img src="~/Images/help.png" />
+                                        </div>
+
+                                        <div class="testimonial-section col-md-9 table-bordered pull-right" style="padding-bottom:5px;">
+                                            <div class="row text-center">
+                                                <h3 style="margin-top:0px; color:#2c3e50"><a href="/Home/Soru/@s.ID">@s.Baslik</a></h3>
+                                            </div>
+                                            @if (string.IsNullOrEmpty(s.Icerik) == false && s.Icerik.Length > 70)
+                                            {
+                                                <p>@(s.Icerik.Substring(0, 200) + " . . . ")</p>
+                                                <p class="pull-right">
+                                                    <a href="/Home/Soru/@s.ID" class="btn btn-warning btn-sm">devamı <span class="glyphicon glyphicon-chevron-right"></span></a>
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <p>@s.Icerik</p>
+                                            }
+                                        </div>
+                                        <br />
+                                        <div class="row text-center">
+                                            <div class="col-md-12 small p-2 col-md-push-2">
+                                                <p>
+                                                    <i class="fa fa-comment"></i> @s.Yorumlari.Count Yorum
+                                                    | <i class="fa fa-eye"></i> @s.GoruntulenmeSayisi Görüntülenme
+                                                    | Kategori : <span class="badge badge-info">@s.Kategori.KategoriAdi</span>
+                                                    | <i class="fa fa-calendar"></i> @s.OlusturulmaTarihi <i class="fa fa-clock-o"></i>
+
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                       
+                                    </div>
+                                </div>
+
+                            }
+                            else if (m.OlusturulmaTarihi >= s.OlusturulmaTarihi)
+                            {
+                                makaleSirasi = makaleSirasi + 1;
+                                <div class="row">
+                                    <div class="col-sm-12 contpost">
+                                        <div class="row">
+                                            <div class="col-md-12 PostTitle">
+                                                <h3><a href="#" style="color:#2c3e50;"></a></h3>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="col-sm-4 col-md-4" style="margin-top:10px;">
+                                                    <a href="/Home/Makale/@m.ID" class="thumbnail">
+                                                        <img src="~/Images/Makale/makale.png" style="height:200px;" />
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="col-md-12" style="margin-top:10px;">
+                                                        <div class="col-md-5">
+                                                            <p style="margin-left:-43px;font-size:15px;">
+                                                                Kategori : <span class="badge badge-info">@m.Kategori.KategoriAdi</span>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-md-7 text-left">
+                                                            <p class="text-right">
+                                                                <i class="fa fa-calendar "></i> @m.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" style="height:170px;">
+                                                        <h3 style="margin-top:0px;margin-top:70px;color:#2c3e50"><b><a href="/Home/Makale/@m.ID">@m.Baslik</a></b></h3>
+                                                    </div>
+
+
+                                                    <div class="col-md-12">
+                                                        <div class="small p-2" style="margin-left:-30px;">
+                                                            <p>
+                                                                <i class="fa fa-thumbs-up"></i> @m.Begenileri.Count Beğenilme
+                                                                | <i class="fa fa-comment"></i> @m.Yorumlari.Count Yorum
+                                                                | <i class="fa fa-eye"></i> @m.GoruntulenmeSayisi Görüntülenme
+
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+
+                                        </div>
+
+                                       
+                                    </div>
+
+
+                                </div>
+                            }
+                        }
+                        else if (soruSirasi < sorularinSayisi && anketSirasi < anketlerinSayisi)
+                        {
+                            if (s.OlusturulmaTarihi >= a.OlusturulmaTarihi)
+                            {
+                                soruSirasi = soruSirasi + 1;
+                                <div class="col-sm-11 col-md-11">
+                                    <div id="tb-testimonial" class="testimonial testimonial-warning">
+                                        <div class="col-md-2 testimonial-desc ">
+                                            <img src="~/Images/help.png" />
+                                        </div>
+
+                                        <div class="testimonial-section col-md-9 table-bordered pull-right" style="padding-bottom:5px;">
+                                            <div class="row text-center">
+                                                <h3 style="margin-top:0px; color:#2c3e50"><a href="/Home/Soru/@s.ID">@s.Baslik</a></h3>
+                                            </div>
+                                            @if (string.IsNullOrEmpty(s.Icerik) == false && s.Icerik.Length > 70)
+                                            {
+                                                <p>@(s.Icerik.Substring(0, 200) + " . . . ")</p>
+                                                <p class="pull-right">
+                                                    <a href="/Home/Soru/@s.ID" class="btn btn-warning btn-sm">devamı <span class="glyphicon glyphicon-chevron-right"></span></a>
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <p>@s.Icerik</p>
+                                            }
+                                        </div>
+                                        <br />
+                                        <div class="row text-center">
+                                            <div class="col-md-12 small p-2 col-md-push-2">
+                                                <p>
+                                                    <i class="fa fa-comment"></i> @s.Yorumlari.Count Yorum
+                                                    | <i class="fa fa-eye"></i> @s.GoruntulenmeSayisi Görüntülenme
+                                                    | Kategori : <span class="badge badge-info">@s.Kategori.KategoriAdi</span>
+                                                    | <i class="fa fa-calendar"></i> @s.OlusturulmaTarihi <i class="fa fa-clock-o"></i>
+
+                                                </p>
+                                            </div>
+                                        </div>
+                                      
+                                    </div>
+                                </div>
+
+
+                            }
+                            else if (a.OlusturulmaTarihi >= s.OlusturulmaTarihi)
+                            {
+                                anketSirasi = anketSirasi + 1;
+
+                                <div class="col-sm-11 col-md-11">
+                                    <div id="tb-testimonial" class="testimonial testimonial-success">
+
+                                        <div class="col-md-2 testimonial-desc" style="margin-top:-20px; ">
+
+                                            <img src="~/Images/anket-1.png" />
+
+                                        </div>
+                                        <div class="testimonial-section col-md-9 table-bordered pull-right">
+                                            <div class="row text-center">
+                                                <h3 style="margin-top:0px;margin-bottom:0px; color:#2c3e50;"><a href="/Home/Anket/@a.ID">@a.Baslik</a></h3>
+                                            </div>
+                                        </div>
+
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-12 small p-2 text-center col-md-push-2">
+                                                <p>
+                                                    <i class="fa fa-comment"></i> @a.Yorumu.Count Yorum
+                                                    | <i class="fa fa-eye"></i> @a.GoruntulenmeSayisi Görüntülenme
+                                                    | Kategori : <span class="badge badge-info">@a.Kategori.KategoriAdi</span>
+                                                    | <i class="fa fa-calendar"></i> @a.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+
+                                                </p>
+                                            </div>
+                                        </div>
+                                       
+                                    </div>
+                                </div>
+
+                            }
+
+                        }
+                        else if (makaleSirasi < makalelerinSayisi && anketSirasi < anketlerinSayisi)
+                        {
+                            if (m.OlusturulmaTarihi >= a.OlusturulmaTarihi)
+                            {
+                                makaleSirasi = makaleSirasi + 1;
+
+                                <div class="row">
+                                    <div class="col-sm-12 contpost">
+                                        <div class="row">
+                                            <div class="col-md-12 PostTitle">
+                                                <h3><a href="#" style="color:#2c3e50;"></a></h3>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="col-sm-4 col-md-4" style="margin-top:10px;">
+                                                    <a href="/Home/Makale/@m.ID" class="thumbnail">
+                                                        <img src="~/Images/Makale/makale.png" style="height:200px;" />
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="col-md-12" style="margin-top:10px;">
+                                                        <div class="col-md-5">
+                                                            <p style="margin-left:-43px;font-size:15px;">
+                                                                Kategori : <span class="badge badge-info">@m.Kategori.KategoriAdi</span>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-md-7 text-left">
+                                                            <p class="text-right">
+                                                                <i class="fa fa-calendar "></i> @m.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" style="height:170px;">
+                                                        <h3 style="margin-top:0px;margin-top:70px;color:#2c3e50"><b><a href="/Home/Makale/@m.ID">@m.Baslik</a></b></h3>
+                                                    </div>
+
+
+                                                    <div class="col-md-12">
+                                                        <div class="small p-2" style="margin-left:-30px;">
+                                                            <p>
+                                                                <i class="fa fa-thumbs-up"></i> @m.Begenileri.Count Beğenilme
+                                                                | <i class="fa fa-comment"></i> @m.Yorumlari.Count Yorum
+                                                                | <i class="fa fa-eye"></i> @m.GoruntulenmeSayisi Görüntülenme
+
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                            }
+                            else if (a.OlusturulmaTarihi >= m.OlusturulmaTarihi)
+                            {
+                                anketSirasi = anketSirasi + 1;
+
+                                <div class="col-sm-11 col-md-11">
+                                    <div id="tb-testimonial" class="testimonial testimonial-success">
+
+                                        <div class="col-md-2 testimonial-desc" style="margin-top:-20px; ">
+
+                                            <img src="~/Images/anket-1.png" />
+
+                                        </div>
+                                        <div class="testimonial-section col-md-9 table-bordered pull-right">
+                                            <div class="row text-center">
+                                                <h3 style="margin-top:0px;margin-bottom:0px; color:#2c3e50;"><a href="/Home/Anket/@a.ID">@a.Baslik</a></h3>
+                                            </div>
+                                        </div>
+
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-12 small p-2 text-center col-md-push-2">
+                                                <p>
+                                                    <i class="fa fa-comment"></i> @a.Yorumu.Count Yorum
+                                                    | <i class="fa fa-eye"></i> @a.GoruntulenmeSayisi Görüntülenme
+                                                    | Kategori : <span class="badge badge-info">@a.Kategori.KategoriAdi</span>
+                                                    | <i class="fa fa-calendar"></i> @a.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+
+                        }
+                        else if (soruSirasi < sorularinSayisi)
+                        {
+                            soruSirasi = soruSirasi + 1;
+                            <div class="col-sm-11 col-md-11">
+                                <div id="tb-testimonial" class="testimonial testimonial-warning">
+                                    <div class="col-md-2 testimonial-desc ">
+                                        <img src="~/Images/help.png" />
+                                    </div>
+
+                                    <div class="testimonial-section col-md-9 table-bordered pull-right" style="padding-bottom:5px;">
+                                        <div class="row text-center">
+                                            <h3 style="margin-top:0px; color:#2c3e50"><a href="/Home/Soru/@s.ID">@s.Baslik</a></h3>
+                                        </div>
+                                        @if (string.IsNullOrEmpty(s.Icerik) == false && s.Icerik.Length > 70)
+                                        {
+                                            <p>@(s.Icerik.Substring(0, 200) + " . . . ")</p>
+                                            <p class="pull-right">
+                                                <a href="/Home/Soru/@s.ID" class="btn btn-warning btn-sm">devamı <span class="glyphicon glyphicon-chevron-right"></span></a>
+                                            </p>
+                                        }
+                                        else
+                                        {
+                                            <p>@s.Icerik</p>
+                                        }
+                                    </div>
+                                    <br />
+                                    <div class="row text-center">
+                                        <div class="col-md-12 small p-2 col-md-push-2">
+                                            <p>
+                                                <i class="fa fa-comment"></i> @s.Yorumlari.Count Yorum
+                                                | <i class="fa fa-eye"></i> @s.GoruntulenmeSayisi Görüntülenme
+                                                | Kategori : <span class="badge badge-info">@s.Kategori.KategoriAdi</span>
+                                                | <i class="fa fa-calendar"></i> @s.OlusturulmaTarihi <i class="fa fa-clock-o"></i>
+
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                   
+                                </div>
+                            </div>
+
+
+                        }
+                        else if (makaleSirasi < makalelerinSayisi)
+                        {
+                            makaleSirasi = makaleSirasi + 1;
+                            <div class="row">
+                                <div class="col-sm-12 contpost">
+                                    <div class="row">
+                                        <div class="col-md-12 PostTitle">
+                                            <h3><a href="#" style="color:#2c3e50;"></a></h3>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-sm-4 col-md-4" style="margin-top:10px;">
+                                                <a href="/Home/Makale/@m.ID" class="thumbnail">
+                                                    <img src="~/Images/Makale/makale.png" style="height:200px;" />
+                                                </a>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="col-md-12" style="margin-top:10px;">
+                                                    <div class="col-md-5">
+                                                        <p style="margin-left:-43px;font-size:15px;">
+                                                            Kategori : <span class="badge badge-info">@m.Kategori.KategoriAdi</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-md-7 text-left">
+                                                        <p class="text-right">
+                                                            <i class="fa fa-calendar "></i> @m.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="row" style="height:170px;">
+                                                    <h3 style="margin-top:0px;margin-top:70px;color:#2c3e50"><b><a href="/Home/Makale/@m.ID">@m.Baslik</a></b></h3>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="small p-2" style="margin-left:-30px;">
+                                                        <p>
+                                                            <i class="fa fa-thumbs-up"></i> @m.Begenileri.Count Beğenilme
+                                                            | <i class="fa fa-comment"></i> @m.Yorumlari.Count Yorum
+                                                            | <i class="fa fa-eye"></i> @m.GoruntulenmeSayisi Görüntülenme
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+                            </div>
+                        }
+                        else if (anketSirasi < anketlerinSayisi)
+                        {
+                            anketSirasi = anketSirasi + 1;
+                            <div class="col-sm-11 col-md-11">
+                                <div id="tb-testimonial" class="testimonial testimonial-success">
+
+                                    <div class="col-md-2 testimonial-desc" style="margin-top:-20px; ">
+
+                                        <img src="~/Images/anket-1.png" />
+
+                                    </div>
+                                    <div class="testimonial-section col-md-9 table-bordered pull-right">
+                                        <div class="row text-center">
+                                            <h3 style="margin-top:0px;margin-bottom:0px; color:#2c3e50;"><a href="/Home/Anket/@a.ID">@a.Baslik</a></h3>
+                                        </div>
+                                    </div>
+
+                                    <br />
+                                    <div class="row">
+                                        <div class="col-md-12 small p-2 text-center col-md-push-2">
+                                            <p>
+                                                <i class="fa fa-comment"></i> @a.Yorumu.Count Yorum
+                                                | <i class="fa fa-eye"></i> @a.GoruntulenmeSayisi Görüntülenme
+                                                | Kategori : <span class="badge badge-info">@a.Kategori.KategoriAdi</span>
+                                                | <i class="fa fa-calendar"></i> @a.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+
+                        }
+
+                    }
+
+                }
+
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>

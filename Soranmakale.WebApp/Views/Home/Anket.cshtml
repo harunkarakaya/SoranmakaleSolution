@@ -1,0 +1,286 @@
+﻿@using Soranmakale.BusinessLayer
+@using Soranmakale.Entities
+@using Soranmakale.WebApp.Models
+
+@model Anket
+
+@{
+    ViewBag.Title = "Anket";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container" style="margin-top:20px;">
+
+    <div class="col-md-12" style="margin-top:30px;">
+        <div class="col-md-2">
+            <img style="width:100px;height:100px;margin-bottom:20px;" src="~/Images/user_img.png" />
+            <p><i class="fa fa-user-circle"></i> @Model.Sahibi.Ad</p>
+            @{
+                if (Model.Sahibi.AdminMi)
+                {
+                    <p>Admin</p>
+
+                }
+                else if (Model.Sahibi.YazarMi)
+                {
+                    <p>Yazar</p>
+                }
+                else
+                {
+                    <p>Üye</p>
+                }
+            }           
+            <p><i class="fa fa-calendar"></i> @Model.OlusturulmaTarihi<i class="fa fa-clock-o"></i></p>
+            <p>Kategori<span class="badge badge-info">@Model.Kategori.KategoriAdi</span></p>
+            <br />
+        </div>
+
+        <div class="col-md-10">
+            <div class="col-md-12">
+                <div class="col-md-11" style="margin-left:-25px;margin-top:0px;">
+                    <script src="~/Scripts/Anket-Js/Anket.js"></script>
+                    <div class="panel panel-primary" style="width:90%; ">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                @Model.Baslik
+                            </h3>
+                        </div>
+                        <div class="panel-body" style="margin:0px; width:115%;">
+                            <div id="Main">
+
+                                @foreach (AnketinCevabi a in Model.Cevaplari)
+                                {
+                                    <button class="btn btn-lg" style="width:0px;" data-anketincevabi-id="@a.ID" data-anket-id="@Model.ID" data-oy-durumu="false" name="poll_bar">@a.SecenekAdi
+                                        <span name="poll_val">@a.Secenler.Count Oy</span>
+                                    </button>
+                                    <br />
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="col-md-9">
+                            <i class="fa fa-comment"></i> @Model.Yorumu.Count Yorum&nbsp;&nbsp;
+                            |&nbsp;&nbsp;<i class="fa fa-eye"></i> @Model.GoruntulenmeSayisi Görüntülenme
+                        </div>
+                    </div>
+
+
+                @if (CurrentSession.kullanici != null)
+                {
+                    using (Html.BeginForm("Anket", "Home", FormMethod.Post))
+                    {
+                        <div class="col-md-11" style="margin-left:-15px;width:715px;">
+                            <div class="card my-4 ">
+                                <h5 class="card-header"></h5>
+                                <div class="card-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <textarea class="form-control" rows="3" name="yorum" placeholder="Yorum yaz..."></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Gönder</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-md-12">
+                        <h2 style="margin-left:0px;margin-top:50px;">Yorum yapmak için giriş yapmalısınız.</h2>
+                    </div>
+                }
+
+
+                    </div>
+
+                <div class="col-md-1 col-md-push-0" data-favanket-id="@Model.ID">
+                    <button type="button" style="border-radius:10px;" class="btn btn-danger btn-md" data-favlanma="false" data-favanket-id="@Model.ID"><!--Fav butonu**********************-->
+                        <i class="fa fa-heart fav-anket"></i>
+                        <span class="fav-ekle-cikar"> Favorilere Ekle</span>
+                    </button>
+                </div>
+
+            </div>
+            
+
+        </div>
+    </div>
+    <!--Yazılan Yorumlar-->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-push-1">
+                <h2 class="page-header">Yorumlar</h2>
+                <section class="comment-list">
+
+                    @foreach (AnketinYorumu y in Model.Yorumu)
+                    {
+                        <article class="row">
+                            <div class="col-md-2 col-sm-2 hidden-xs">
+                                <img class="img-responsive" src="~/Images/user_img.png" />
+                                <figcaption class="text-center"> @y.Sahibi.KullaniciAdi</figcaption>
+                            </div>
+                            <div class="col-md-10 col-sm-10">
+                                <div class="panel panel-default arrow left" style="border-radius:20px;">
+                                    <div class="panel-body">
+                                        <div class="col-md-10">
+                                            <header class="text-left">
+                                                @{
+                                                    if (y.Sahibi.Ad != null && y.Sahibi.Soyad != null)
+                                                    {
+                                                        <div class="comment-user"><i class="fa fa-user"></i> @y.Sahibi.Ad  @y.Sahibi.Soyad</div>
+                                                    }
+                                                }
+                                                <time class="comment-date"><i class="fa fa-clock-o"></i> @y.OlusturulmaTarihi</time>
+                                            </header>
+                                            <br />
+                                            <div class="comment-post">
+                                                <p>
+                                                    @y.Icerik
+                                                </p>
+                                            </div>
+                                        </div>
+                                        @if (y.Sahibi == CurrentSession.kullanici)
+                                        {
+                                            using (Html.BeginForm("anketYorumSilme", "Home", FormMethod.Post))
+                                            {
+                                                <div class="col-md-2 text-right" style="margin-top:30px;">
+                                                    <button class="btn btn-danger btn-sm" value="@y.ID" name="yorumid"><span class="glyphicon glyphicon-trash"></span></button> &nbsp;
+                                                    <input class="hidden" value="@Model.ID" name="anketid" />
+                                                </div>
+                                            }
+                                        }
+
+
+                                        </div>
+                                </div>
+                            </div>
+                        </article>
+                    }             
+                </section>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    $(function () {
+
+        var favanketid = $("div[data-favanket-id]").data("favanket-id");
+
+        $.ajax({
+            method: "POST",
+            url: "/Home/AnketFavlama/",
+            data: { a_id: favanketid }
+        }).done(function (data) {
+
+            if (data.result != null && data.result != 0) {
+
+                var favlanananket = $("div[data-favanket-id]");
+                var btn = favlanananket.find("button[data-favanket-id]");
+                var icon = btn.children().first();
+
+                btn.data("favlanma", true);
+                icon.removeClass("fa fa-heart");
+                icon.addClass("fa fa-heart-o");
+
+                btn.children("span.fav-ekle-cikar").text("Favorilerden Kaldır");
+
+            }
+
+        }).fail(function () {
+
+        });
+
+
+        $("button[data-favlanma]").click(function () {
+
+            var btn = $(this);
+            var fav_button_durumu = btn.data("favlanma");
+            var favanketid = btn.data("favanket-id");
+
+            var iconheart = btn.find("i.fav-anket");
+            var spanFavEkleCikar = btn.find("span.fav-ekle-cikar");
+
+            console.log(fav_button_durumu);
+
+            $.ajax({
+                method: "POST",
+                url: "/Home/SetAnketFavlama",
+                data: { "favanketid": favanketid, "fav": !fav_button_durumu }
+            }).done(function (data) {
+
+                if (data.hasError) {
+                    alert(data.errorMessage);
+                }
+                else {
+                    fav_button_durumu = !fav_button_durumu;
+                    btn.data("favlanma", fav_button_durumu);
+
+                    iconheart.removeClass("fa fa-heart");
+                    iconheart.removeClass("fa fa-heart-o");
+
+                    if (fav_button_durumu) {
+                        iconheart.addClass("fa fa-heart-o");
+                        spanFavEkleCikar.text("Favorilerden Kaldır");
+                    } else {
+                        iconheart.addClass("fa fa-heart");
+                        spanFavEkleCikar.text("Favorilere Ekle");
+                    }
+                }
+
+            }).fail(function () {
+
+                alert("Giriş yapmalısınız!");
+            });
+
+
+        });
+
+    });
+
+    $(function () {
+
+        $("button[data-anketincevabi-id]").click(function () {
+
+            var btn = $(this);
+            var anket_secenek_id = btn.data("anketincevabi-id");
+            var anket_id = btn.data("anket-id");
+            var oy_durumu = btn.data("oy-durumu");
+
+            $.ajax({
+                method: "POST",
+                url: "/Home/AnketOyVerme",
+                data: { "anket_secenek_id": anket_secenek_id, "anket_id": anket_id, "oy_durumu": oy_durumu }
+            }).done(function (data) {
+
+                if (data.hasError) {
+                    alert(data.errorMessage);
+                }
+                else {
+                    //Oyu kullandıktan sonra kullanılan seçeneğin oy durumunu true yap ki o seçeneğe oy verildiği belli olsun.
+
+                    if (!data.hasError) {
+                        alert(data.errorMessage);
+                    }
+                    if (data.result > 0)
+                    {
+                        location.reload();
+                    }
+                    
+                }
+
+            }).fail(function () {
+
+                alert("Giriş yapmalısınız!");
+            });
+
+        });
+
+    });
+
+</script>

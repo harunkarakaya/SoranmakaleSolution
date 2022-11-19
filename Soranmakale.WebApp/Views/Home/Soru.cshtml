@@ -1,0 +1,357 @@
+﻿@using Soranmakale.BusinessLayer
+@using Soranmakale.Entities
+@using Soranmakale.WebApp.Models
+
+@{
+    ViewBag.Title = "Soru";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model Soru
+
+<div class="container" style="margin-top:-20px;">
+    <div class="row col-md-12 text-center">
+        <img style="width:600px;height:250px;" src="~/Images/Soru-Sayfası/soru-7.png" />
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-2" style="margin-top:70px;">
+            <img style="width:100px;height:100px;margin-bottom:20px;" src="~/Images/user_img.png" />
+
+            @{
+                if (Model.Sahibi.Ad != null && Model.Sahibi.Soyad != null)
+                {
+                    <p><i class="fa fa-user-circle"></i> @Model.Sahibi.Ad @Model.Sahibi.Soyad</p>
+                }
+                if (Model.Sahibi.AdminMi)
+                {
+                    <p>Admin</p>
+
+                }
+                else if (Model.Sahibi.YazarMi)
+                {
+                    <p>Yazar</p>
+                }
+                else
+                {
+                    <p>Üye</p>
+                }
+            }
+    
+            <p><i class="fa fa-calendar"></i> @DateTime.Now<i class="fa fa-clock-o"></i></p>
+            <p>Kategori : <span class="badge badge-info"> @Model.Kategori.KategoriAdi</span></p>
+            <br />
+        </div>
+
+        <div class="col-md-10">
+            <div class="col-md-12">
+                <div class="col-md-11 text-center">
+                    <h2 style="">@Model.Baslik</h2>
+                </div>
+                <div class="col-md-1 col-md-push-0" data-favsoru-id="@Model.ID">
+                    <button type="button" style="border-radius:10px;" class="btn btn-danger btn-md" data-favlanma="false" data-favsoru-id="@Model.ID"><!--Fav butonu**********************-->
+                        <i class="fa fa-heart fav-soru"></i>
+                        <span class="fav-ekle-cikar"> Favorilere Ekle</span>
+                    </button>
+
+                </div>
+            </div>
+            <div style="margin-left:-25px;margin-top:20px;" class="col-md-8 col-md-push-2">
+                <p>
+                   @Model.Icerik
+                </p>
+                <br />
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-md-12 col-md-push-3">
+        <div class="col-md-9">
+           <i class="fa fa-comment"></i> @Model.Yorumlari.Count Yorum&nbsp;&nbsp;
+            |&nbsp;&nbsp;<i class="fa fa-eye"></i> @Model.GoruntulenmeSayisi Görüntülenme
+        </div>
+    </div>
+    @if (CurrentSession.kullanici != null)
+    {
+        <!-- Yorum Form -->
+        using (Html.BeginForm("Soru", "Home", FormMethod.Post))
+        {
+            <div class="col-md-8 col-md-push-3">
+                <div class="card my-4 ">
+                    <h5 class="card-header"></h5>
+                    <div class="card-body">
+                        <form>
+                            <div class="form-group">
+                                <textarea class="form-control" rows="3" name="yorum" placeholder="Yorum yaz..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Gönder</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>  
+        }
+    }
+    else
+    {
+        <div class="col-md-9">
+            <h2 style="margin-left:250px;margin-top:50px;">Yorum yapmak için giriş yapmalısınız.</h2>
+        </div>
+    }
+
+    <!--Yazılan Yorumlar-->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-push-2">
+                <h2 class="page-header">Yorumlar</h2>
+                <section class="comment-list">
+                    <!-- First Comment -->
+
+                    @{ 
+                        List<SorununYorumu> sorunun_yorumlari = Model.Yorumlari;
+                        //Beğeni sayısı büyük olan en üstte yer alacak
+                    }
+
+                    @foreach (SorununYorumu sy in Model.Yorumlari)
+                    {
+                        <article class="row">
+                            <div class="col-md-2 col-sm-2 hidden-xs">
+                                <img class="img-responsive" src="~/Images/user_img.png" />
+                                <figcaption class="text-center"> @sy.Sahibi.KullaniciAdi</figcaption>
+                            </div>
+                            <div class="col-md-10 col-sm-10">
+                                <div class="panel panel-default arrow left" style="border-radius:20px;">
+                                    <div class="panel-body">
+                                        <div class="col-md-10">
+                                            <header class="text-left">
+                                                @{
+                                                    if (sy.Sahibi.Ad != null && sy.Sahibi.Soyad != null)
+                                                    {
+                                                        <div class="comment-user"><i class="fa fa-user"></i> @sy.Sahibi.Ad  @sy.Sahibi.Soyad</div>
+                                                    }
+                                                }
+                                                <time class="comment-date"><i class="fa fa-clock-o"></i> @sy.OlusturulmaTarihi</time>
+                                            </header>
+                                            <br />
+                                            <div class="comment-post">
+                                                <p>
+                                                    @sy.Icerik
+                                                </p>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="col-md-6" data-yorum-id="@sy.ID" style="margin-left:-30px;">
+                                                    <button type="button" id="begenme_butonu" data-begenilme="false" data-yorum-id="@sy.ID" style="border-radius:5px;" class="btn btn-primary btn-sm">
+                                                        <span class="fa fa-thumbs-up like-thumbs" style="color:white;"></span>
+                                                        <span class="begeni-sayisi like-count" style="color:white;">@sy.Begenileri.Count </span> &nbsp;
+                                                        <span class="durum" data-durum="false">Beğen</span>
+
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if (sy.Sahibi == CurrentSession.kullanici)
+                                        {
+                                            using (Html.BeginForm("soruYorumSilme","Home",FormMethod.Post))
+                                            {
+                                                <div class="col-md-2 text-right" style="margin-top:30px;">
+                                                    <button class="btn btn-danger btn-sm" value="@sy.ID" name="yorumid"><span class="glyphicon glyphicon-trash"></span></button> &nbsp;
+                                                    <input class="hidden" value="@Model.ID" name="soruid"/>
+                                                </div>
+                                            }
+
+                                        }
+ 
+
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    }
+                </section>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    $(function () {
+
+        var yorumid = [];
+
+
+        $("div[data-yorum-id]").each(function (i, e) {
+
+            yorumid.push($(e).data("yorum-id"));
+
+        });
+
+        $.ajax({
+            method: "POST",
+            url: "/Home/CommentLike/",
+            data: { c_id: yorumid }
+        }).done(function (data) {
+
+            if (data.result != null && data.result.length > 0) {
+
+                for (var i = 0; i < data.result.length; i++) {
+                    var id = data.result[i];
+                    var begenilenyorum = $("div[data-yorum-id= " + id + "]");
+
+                    var btn = begenilenyorum.find("button[data-begenilme]");
+                    var span = btn.find("span.like-thumbs");
+                    var span_begenme_durumu = btn.find("span[data-durum]");
+
+                    btn.data("begenilme", true);
+                    span.removeClass("fa fa-thumbs-up");
+                    span.addClass("fa fa-thumbs-o-up");
+
+                    span_begenme_durumu.text("Beğenmekten vazgeç");
+                }
+            }
+
+        }).fail(function () {
+            alert("başarısız.");
+            });
+
+
+
+        $("button[data-begenilme]").click(function () {
+            var btn = $(this);
+            var liked_button = btn.data("begenilme");
+            var yorumid = btn.data("yorum-id");
+            var spanThumps = btn.find("span.like-thumbs");
+            var spanCount = btn.find("span.like-count");
+            var spanDurum = btn.find("span.durum");
+
+            console.log(liked_button);
+            console.log("like count: " + spanCount.text());
+
+            $.ajax({
+                method: "POST",
+                url: "/Home/SetLikeCommentState",
+                data: { "yorumid": yorumid, "liked": !liked_button }
+            }).done(function (data) {
+
+                console.log(data);
+
+                if (data.hasError)
+                {
+                    alert(data.errorMessage);
+                }
+                else {
+                    liked_button = !liked_button;
+                    btn.data("begenilme", liked_button);
+                    spanCount.text(data.result);
+
+                    console.log("like count(after):" + spanCount.text());
+
+                    spanThumps.removeClass("fa fa-thumbs-o-up");
+                    spanThumps.removeClass("fa fa-thumbs-up");
+
+                    if (liked_button) {
+                        spanThumps.addClass("fa fa-thumbs-o-up");
+                        spanDurum.text("Beğenmekten vazgeç");
+                    } else {
+                        spanThumps.addClass("fa fa-thumbs-up");
+                        spanDurum.text("Beğen");
+                    }
+                }
+
+            }).fail(function () {
+
+                alert("Giriş yapmalısınız!");
+            });
+
+
+        });
+
+    });
+
+    $(function () {
+
+        var favsoruid = $("div[data-favsoru-id]").data("favsoru-id");
+
+        $.ajax({
+            method: "POST",
+            url: "/Home/SoruFavlama/",
+            data: { s_id: favsoruid }
+        }).done(function (data) {
+
+            if (data.result != null && data.result != 0) {
+
+                var favlanansoru = $("div[data-favsoru-id]");
+                var btn = favlanansoru.find("button[data-favsoru-id]");
+                var icon = btn.children().first();
+
+                btn.data("favlanma", true);
+                icon.removeClass("fa fa-heart");
+                icon.addClass("fa fa-heart-o");
+
+                btn.children("span.fav-ekle-cikar").text("Favorilerden Kaldır");
+
+            }
+
+        }).fail(function () {
+
+        });
+
+        /*
+        <div class="col-md-1 col-md-push-0" data-favmak-id="Model.ID">
+
+           <button type="button" style="border-radius:10px;" class="btn btn-danger btn-md" data-favlanma="false" data-favmak-id="Model.ID">  <!--Fav butonu**********************-->
+                <i class="fa fa-heart fav-mak"></i>
+                <span class="fav-ekle-cikar"> Favorilere Ekle</span>
+           </button>
+
+        </div>
+        */
+
+        $("button[data-favlanma]").click(function () {
+            var btn = $(this);
+            var fav_button_durumu = btn.data("favlanma");
+            var favmakid = btn.data("favsoru-id");
+
+            var iconheart = btn.find("i.fav-soru");
+            var spanFavEkleCikar = btn.find("span.fav-ekle-cikar");
+
+            console.log(fav_button_durumu);
+
+            $.ajax({
+                method: "POST",
+                url: "/Home/SetSoruFavlama",
+                data: { "favsoruid": favsoruid, "fav": !fav_button_durumu }
+            }).done(function (data) {
+
+                if (data.hasError) {
+                    alert(data.errorMessage);
+                }
+                else {
+                    fav_button_durumu = !fav_button_durumu;
+                    btn.data("favlanma", fav_button_durumu);
+
+                    iconheart.removeClass("fa fa-heart");
+                    iconheart.removeClass("fa fa-heart-o");
+
+                    if (fav_button_durumu) {
+                        iconheart.addClass("fa fa-heart-o");
+                        spanFavEkleCikar.text("Favorilerden Kaldır");
+                    } else {
+                        iconheart.addClass("fa fa-heart");
+                        spanFavEkleCikar.text("Favorilere Ekle");
+                    }
+                }
+
+            }).fail(function () {
+
+                alert("Giriş yapmalısınız!");
+            });
+
+
+        });
+
+    });
+
+
+</script>

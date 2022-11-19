@@ -1,0 +1,155 @@
+﻿@using Soranmakale.Entities
+@model IEnumerable<Soranmakale.Entities.Kullanici>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Kullanici kul = ViewBag.Aranan as Kullanici;
+
+}
+<link href="~/Content/Yonetim-Searchbox/searchbox.css" rel="stylesheet" />
+<br />
+<div class="row">
+    <div class="col-md-7 col-md-push-3 col-sm-7 col-sm-push-3">
+        <div class="row">
+            <div class="col-md-6" style="margin-left:-18px;">
+                <h2>Kullanıcı adına göre arama</h2>
+
+                @using (Html.BeginForm("Index", "Kullanici", FormMethod.Get))
+                {
+                    <div id="custom-search-input">
+                        <div class="input-group col-md-12">
+                            <input type="text" class="search-query form-control" value="" name="aranan" placeholder="Kullanıcı Adı" />
+                            <span class="input-group-btn">
+                                <button class="btn btn-danger" type="submit">
+                                    <span class=" glyphicon glyphicon-search"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                 }
+            </div>
+        </div><br />
+        <div class="row">
+            <br /><br />
+            
+
+            @if (kul != null)
+            {
+
+                <table class="table table-striped" style="border:2px groove;border-radius:10px;">
+                    <tr style="font-size:19px;">
+                        <th>
+                            @Html.DisplayNameFor(model => model.KullaniciAdi)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.Email)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Ad)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.KayitTarihi)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.RutbePuani)
+                        </th>
+                        <th></th>
+                    </tr>
+
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => kul.KullaniciAdi)
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => kul.Email)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => kul.Ad)
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => kul.KayitTarihi)
+
+                            <td>
+                                @Html.DisplayFor(modelItem => kul.RutbePuani)
+                            </td>
+                            <td>
+                                <a href="/Kullanici/Edit/@kul.ID" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-edit"></span> Düzenle</a> &nbsp;
+                                <a href="/Kullanici/Details/@kul.ID" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-list"></span> Detayları</a> &nbsp;
+                                <a href="/Kullanici/Delete/@kul.ID" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span> Sil</a> &nbsp;
+                            </td>
+                        </tr>
+
+                </table>
+            }
+            else
+            {
+                if (ViewBag.mesaj != null)
+                {
+                    <h2 style="color:red;">@ViewBag.mesaj</h2>
+                }
+                else
+                {
+                    <table class="table table-striped" style="border:2px groove;border-radius:10px;">
+                        <tr style="font-size:19px;">
+                            <th>
+                                @Html.DisplayNameFor(model => model.KullaniciAdi)
+                            </th>
+
+                            <th>
+                                @Html.DisplayNameFor(model => model.Email)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Ad)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.KayitTarihi)
+                            </th>
+
+                            <th>
+                                @Html.DisplayNameFor(model => model.RutbePuani)
+                            </th>
+                            <th></th>
+                        </tr>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.KullaniciAdi)
+                                </td>
+
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Email)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Ad)
+                                </td>
+
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.KayitTarihi)
+
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.RutbePuani)
+                                </td>
+                                <td>
+                                    <a href="/Kullanici/Edit/@item.ID" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-edit"></span> Düzenle</a> &nbsp;
+                                    <a href="/Kullanici/Details/@item.ID" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-list"></span> Detayları</a> &nbsp;
+                                    <a href="/Kullanici/Delete/@item.ID" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span> Sil</a> &nbsp;
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+
+                }
+
+
+            }
+        </div>
+    </div>
+</div>

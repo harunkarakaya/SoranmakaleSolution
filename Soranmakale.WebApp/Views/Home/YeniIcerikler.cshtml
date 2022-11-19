@@ -1,0 +1,870 @@
+﻿@using Soranmakale.Entities
+@using Soranmakale.BusinessLayer
+@using Soranmakale.WebApp.Models
+
+@{
+    ViewBag.Title = "YeniIcerikler";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/IndexTemplate/3DButton.css" rel="stylesheet" />
+<link href="~/Content/IndexTemplate/Anasayfa-makale.css" rel="stylesheet" />
+<link href="~/Content/IndexTemplate/Anasayfa-soru-anket.css" rel="stylesheet" />
+<link href="~/Content/IndexTemplate/CheckboxBootstrap.css" rel="stylesheet" />
+<link href="~/Content/IndexTemplate/ListeleButton.css" rel="stylesheet" />
+
+
+@{
+    MakaleManager makale_manager = new MakaleManager();
+    AnketManager anket_manager = new AnketManager();
+    SoruManager soru_manager = new SoruManager();
+
+    List<Anket> anketler = new List<Anket>();
+    List<Soru> sorular = new List<Soru>();
+    List<Makale> makaleler = new List<Makale>();
+
+
+    Kategori kat = ViewBag.Kategori as Kategori;
+    <!--Soru,Anket,Makale Filtreleme-->
+
+
+
+    if (ViewBag.Soru == null && ViewBag.Anket == null && ViewBag.Makale == null)
+    {
+        //Arama listeleme
+        if (ViewBag.bsorular != null || ViewBag.banketler !=null || ViewBag.bmakaleler !=null)
+        {
+            anketler = ViewBag.banketler as List<Anket>;
+            sorular = ViewBag.bsorular as List<Soru>;
+            makaleler = ViewBag.bmakaleler as List<Makale>;
+        }
+        else if(ViewBag.Kategori != null)
+        {
+            anketler = kat.Anketleri;
+            sorular = kat.Sorulari;
+            makaleler = kat.Makaleleri;
+        }
+        else
+        {
+            anketler = anket_manager.List();
+            sorular = soru_manager.List();
+            makaleler = makale_manager.List();
+        }
+
+        if(makaleler.Count > 0)
+        {
+            if (makaleler[0].OlusturulmaTarihi < makaleler[makaleler.Count - 1].OlusturulmaTarihi)
+            {
+                makaleler.Reverse();
+            }
+        }
+
+        if(sorular.Count > 0)
+        {
+            if (sorular[0].OlusturulmaTarihi < sorular[sorular.Count - 1].OlusturulmaTarihi)
+            {
+                sorular.Reverse();
+            }
+        }
+
+        if(anketler.Count > 0)
+        {
+            if (anketler[0].OlusturulmaTarihi < anketler[anketler.Count - 1].OlusturulmaTarihi)
+            {
+                anketler.Reverse();
+            }
+        }
+
+    }    //Hiç biri seçili değilse hepsini getirecek default olarak
+
+    if (ViewBag.Soru != null)
+    {
+        sorular = soru_manager.List();
+
+        if (sorular[0].OlusturulmaTarihi < sorular[sorular.Count - 1].OlusturulmaTarihi)
+        {
+            sorular.Reverse();
+        }
+    }      //Soru seçili ise
+    if (ViewBag.Anket != null)
+    {
+        anketler = anket_manager.List();
+
+        if (anketler[0].OlusturulmaTarihi < anketler[anketler.Count - 1].OlusturulmaTarihi)
+        {
+            anketler.Reverse();
+        }
+    }     //Anket seçili ise
+    if (ViewBag.Makale != null)
+    {
+        makaleler = makale_manager.List();
+        if (makaleler[0].OlusturulmaTarihi < makaleler[makaleler.Count - 1].OlusturulmaTarihi)
+        {
+            makaleler.Reverse();
+        }
+    }    //Makale seçili ise
+
+}
+
+
+<div class="container">
+
+    <!--Her sayfada aynı şeyleri yapmaktansa layout'a almayı dene-->
+    <!--Soru,anket,makale butonları-->
+    <div class="row">
+
+        @if (CurrentSession.kullanici != null)
+        {
+            //Soru oluşturma sayfasına gidecek
+            <div class="col-md-5 col-md-push-0">
+                <a href="/Soru/Create"><button type="button" class="btn btn-warning btn-md btn3d"><i class="fa fa-question" aria-hidden="true"></i> Soru Sor</button></a>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-5 col-md-push-0">
+                <a href="/Home/Login"><button type="button" class="btn btn-warning btn-md btn3d"><i class="fa fa-question" aria-hidden="true"></i> Soru Sor</button></a>
+            </div>
+        }
+
+        @if (CurrentSession.kullanici != null)
+        {
+            <div class="col-md-3">
+                <a href="/Anket/Create"><button type="button" class="btn btn-danger btn-md btn3d"><i class="fa fa-pie-chart" aria-hidden="true"></i> Anket Oluştur</button></a>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-3">
+                <a href="/Home/Login"><button type="button" class="btn btn-danger btn-md btn3d"><i class="fa fa-pie-chart" aria-hidden="true"></i> Anket Oluştur</button></a>
+            </div>
+        }
+
+        @if (CurrentSession.kullanici != null)
+        {
+            <div class="col-md-1 col-md-push-2">
+                @if (CurrentSession.kullanici.YazarMi)
+                {
+                    <a href="/Makale/Create"><button style="margin:10px 0px 0px 45px;" type="button" class="btn btn-primary btn-md btn3d"><i class="fa fa-pencil" aria-hidden="true"></i> Makale Yaz</button></a>
+                }
+                else
+                {
+                    <a href="#"><button style="margin:10px 0px 0px 45px;" type="button" class="btn btn-primary btn-md btn3d"><i class="fa fa-pencil" aria-hidden="true"></i> Makale Yaz</button></a>
+
+                }            </div>
+        }
+        else
+        {
+            <div class="col-md-1 col-md-push-2">
+                <a href="/Home/Login"><button style="margin:10px 0px 0px 45px;" type="button" class="btn btn-primary btn-md btn3d"><i class="fa fa-pencil" aria-hidden="true"></i> Makale Yaz</button></a>
+            </div>
+        }
+    </div>
+    <p></p>
+
+    <!--İçerik tipi-->
+    <div class="row">
+        <div class="col-md-12">
+            <div style="background-color:#2c3e50;" class="alert" role="alert">
+                <h4 style="font-size:30px;margin:-10px;color:white" class="text-center">Yeni İçerikler</h4>
+            </div>
+        </div>
+    </div>
+
+
+    <!--Filtreleme Butonu-->
+        <div class="row">
+            <div class="form-group">
+                @using (Html.BeginForm("YeniIcerikler", "Home", FormMethod.Post))
+                {
+                    <div class="col-md-10 col-md-push-3">
+
+                        <label class="checkbox-inline checbox-switch switch-warning">
+                            <input type="checkbox" name="soru" value="Soru" />
+                            <span></span>
+                            <i class="fa fa-question" aria-hidden="true"></i> Sorular
+                        </label>
+
+                        <label class="checkbox-inline checbox-switch switch-danger">
+                            <input type="checkbox" name="anket" value="Anket" />
+                            <span></span>
+                            <i class="fa fa-pie-chart" aria-hidden="true"></i> Anketler
+                        </label>
+
+                        <label class="checkbox-inline checbox-switch switch-primary">
+                            <input type="checkbox" name="makale" value="Makale" />
+                            <span></span>
+                            <i class="fa fa-pencil" aria-hidden="true"></i> Makaleler
+                        </label>
+
+                    </div>
+
+                    <div class="col-md-2">
+                        <button type="submit" class="snip1434">Listele<i class="ion-stats-bars"></i></button>
+                    </div>
+                }
+            </div>
+        </div>
+
+
+
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+
+
+
+    <!--içerikler basılıyor-->
+    <div class="container col-md-9 col-sm-9">
+        @{
+
+
+            int sorularinSayisi, anketlerinSayisi, makalelerinSayisi, soruSirasi = 0, anketSirasi = 0, makaleSirasi = 0;
+
+            makalelerinSayisi = makaleler.Count();
+            sorularinSayisi = sorular.Count();
+            anketlerinSayisi = anketler.Count();
+
+            int basacagiIcerikSayisi = makalelerinSayisi + sorularinSayisi + anketlerinSayisi;
+
+            Soru s = new Soru();
+            Anket a = new Anket();
+            Makale m = new Makale();
+
+            if (sorular.Count > 0)
+            {
+                s = sorular[soruSirasi];
+            }
+            if (anketler.Count > 0)
+            {
+                a = anketler[anketSirasi];
+            }
+            if (makaleler.Count > 0)
+            {
+                m = makaleler[makaleSirasi];
+            }
+
+
+
+            for (int i = 0; i < basacagiIcerikSayisi; i++)
+            {
+
+                if (soruSirasi < sorularinSayisi)
+                {
+                    s = sorular[soruSirasi];
+
+                }
+                if (makaleSirasi < makalelerinSayisi)
+                {
+                    m = makaleler[makaleSirasi];
+
+                }
+
+                if (anketSirasi < anketlerinSayisi)
+                {
+                    a = anketler[anketSirasi];
+
+                }
+
+
+                if (soruSirasi < sorularinSayisi && makaleSirasi < makalelerinSayisi && anketSirasi < anketlerinSayisi)
+                {
+
+                    if (s.OlusturulmaTarihi >= m.OlusturulmaTarihi && s.OlusturulmaTarihi >= a.OlusturulmaTarihi)
+                    {
+                        soruSirasi = soruSirasi + 1;
+
+                        //Partial'lara alınacaklar
+                        <div class="col-sm-12 col-md-12">
+                            <div id="tb-testimonial" class="testimonial testimonial-warning">
+                                <div class="col-md-2 testimonial-desc ">
+                                    <img src="~/Images/help.png" />
+                                </div>
+
+                                <div class="testimonial-section col-md-10 table-bordered pull-right" style="padding-bottom:5px;">
+                                    <div class="row text-center">
+                                        <h3 style="margin-top:0px; color:#2c3e50"><a href="/Home/Soru/@s.ID">@s.Baslik</a></h3>
+                                    </div>
+                                    @if (string.IsNullOrEmpty(s.Icerik) == false && s.Icerik.Length > 74)
+                                    {
+                                        <p>@(s.Icerik.Substring(0, 74) + " . . . ")</p>
+                                        <p class="pull-right">
+                                            <a href="/Home/Soru/@s.ID" class="btn btn-warning btn-sm">devamı <span class="glyphicon glyphicon-chevron-right"></span></a>
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <p>@s.Icerik</p>
+                                    }
+                                </div>
+                                <br />
+                                <div class="row text-center">
+                                    <div class="col-md-12 small p-2 col-md-push-1">
+                                        <p>
+                                            <i class="fa fa-user-circle"></i> @s.Sahibi.Ad
+                                            | <i class="fa fa-comment"></i> @s.Yorumlari.Count Yorum
+                                            | <i class="fa fa-eye"></i> @s.GoruntulenmeSayisi Görüntülenme
+                                            | Kategori : <span class="badge badge-info">@s.Kategori.KategoriAdi</span>
+                                            | <i class="fa fa-calendar"></i> @s.OlusturulmaTarihi <i class="fa fa-clock-o"></i>
+
+                                        </p>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>  
+                    }
+                    else if (m.OlusturulmaTarihi >= s.OlusturulmaTarihi && m.OlusturulmaTarihi >= a.OlusturulmaTarihi)
+                    {
+                        makaleSirasi = makaleSirasi + 1;
+
+                        //Partial'lara alınacaklar
+                        <div class="row">
+                            <div class="col-sm-12 contpost">
+                                <div class="row">
+                                    <div class="col-md-12 PostTitle">
+                                        <h3><a href="#" style="color:#2c3e50;"></a></h3>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-sm-4 col-md-4" style="margin-top:10px;">
+                                            <a href="/Home/Makale/@m.ID" class="thumbnail">
+                                                <img src="~/Images/Makale/makale.png" style="height:200px;" />
+                                            </a>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="col-md-12" style="margin-top:10px;">
+                                                <div class="col-md-6">
+                                                    <p style="margin-left:-43px;font-size:15px;">
+                                                        Kategori : <span class="badge badge-info">@m.Kategori.KategoriAdi</span>
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-6 text-left">
+                                                    <p class="text-right">
+                                                        <i class="fa fa-calendar "></i> @m.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="height:170px;">
+                                                <h3 style="margin-top:0px;margin-top:70px;color:#2c3e50"><b><a href="/Home/Makale/@m.ID">@m.Baslik</a></b></h3>
+                                            </div>
+
+
+                                            <div class="col-md-12">
+                                                <div class="small p-2" style="margin-left:-30px;">
+                                                    <p>
+                                                        <i class="fa fa-user-circle"></i> @m.Sahibi.Ad
+                                                        | <i class="fa fa-thumbs-up"></i> @m.Begenileri.Count Beğenilme
+                                                        | <i class="fa fa-comment"></i> @m.Yorumlari.Count Yorum
+                                                        | <i class="fa fa-eye"></i> @m.GoruntulenmeSayisi Görüntülenme
+
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div class="row">
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                    }
+                    else if (a.OlusturulmaTarihi >= s.OlusturulmaTarihi && a.OlusturulmaTarihi >= m.OlusturulmaTarihi)
+                    {
+                        anketSirasi = anketSirasi + 1;
+
+                        //Partial'lara alınacaklar
+                        <div class="col-sm-12 col-md-12">
+                            <div id="tb-testimonial" class="testimonial testimonial-success">
+
+                                <div class="col-md-2 testimonial-desc" style="margin-top:-20px; ">
+
+                                    <img src="~/Images/anket-1.png" />
+
+                                </div>
+                                <div class="testimonial-section col-md-10 table-bordered">
+                                    <div class="row text-center">
+                                        <h3 style="margin-top:0px;margin-bottom:0px; color:#2c3e50;"><a href="/Home/Anket/@a.ID">@a.Baslik</a></h3>
+                                    </div>
+                                </div>
+
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12 small p-2 text-center col-md-push-1">
+                                        <p>
+                                            <i class="fa fa-user-circle"></i> @a.Sahibi.Ad
+                                            | <i class="fa fa-comment"></i> @a.Yorumu.Count Yorum
+                                            | <i class="fa fa-eye"></i> @s.GoruntulenmeSayisi Görüntülenme
+                                            | Kategori : <span class="badge badge-info">@a.Kategori.KategoriAdi</span>
+                                            | <i class="fa fa-calendar"></i> @a.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+
+                                        </p>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    }
+                }
+                else if (soruSirasi < sorularinSayisi && makaleSirasi < makalelerinSayisi)
+                {
+
+                    if (s.OlusturulmaTarihi >= m.OlusturulmaTarihi)
+                    {
+                        soruSirasi = soruSirasi + 1;
+
+                        <div class="col-sm-12 col-md-12">
+                            <div id="tb-testimonial" class="testimonial testimonial-warning">
+                                <div class="col-md-2 testimonial-desc ">
+                                    <img src="~/Images/help.png" />
+                                </div>
+
+                                <div class="testimonial-section col-md-10 table-bordered pull-right" style="padding-bottom:5px;">
+                                    <div class="row text-center">
+                                        <h3 style="margin-top:0px; color:#2c3e50"><a href="/Home/Soru/@s.ID">@s.Baslik</a></h3>
+                                    </div>
+                                    @if (string.IsNullOrEmpty(s.Icerik) == false && s.Icerik.Length > 70)
+                                    {
+                                        <p>@(s.Icerik.Substring(0, 200) + " . . . ")</p>
+                                        <p class="pull-right">
+                                            <a href="/Home/Soru/@s.ID" class="btn btn-warning btn-sm">devamı <span class="glyphicon glyphicon-chevron-right"></span></a>
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <p>@s.Icerik</p>
+                                    }
+                                </div>
+                                <br />
+                                <div class="row text-center">
+                                    <div class="col-md-12 small p-2 col-md-push-1">
+                                        <p>
+                                            <i class="fa fa-user-circle"></i> @s.Sahibi.Ad
+                                            | <i class="fa fa-comment"></i> @s.Yorumlari.Count Yorum
+                                            | <i class="fa fa-eye"></i> @s.GoruntulenmeSayisi Görüntülenme
+                                            | Kategori : <span class="badge badge-info">@s.Kategori.KategoriAdi</span>
+                                            | <i class="fa fa-calendar"></i> @s.OlusturulmaTarihi <i class="fa fa-clock-o"></i>
+
+                                        </p>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                    }
+                    else if (m.OlusturulmaTarihi >= s.OlusturulmaTarihi)
+                    {
+                        makaleSirasi = makaleSirasi + 1;
+                        <div class="row">
+                            <div class="col-sm-12 contpost">
+                                <div class="row">
+                                    <div class="col-md-12 PostTitle">
+                                        <h3><a href="#" style="color:#2c3e50;"></a></h3>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-sm-4 col-md-4" style="margin-top:10px;">
+                                            <a href="/Home/Makale/@m.ID" class="thumbnail">
+                                                <img src="~/Images/Makale/makale.png" style="height:200px;" />
+                                            </a>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="col-md-12" style="margin-top:10px;">
+                                                <div class="col-md-6">
+                                                    <p style="margin-left:-43px;font-size:15px;">
+                                                        Kategori : <span class="badge badge-info">@m.Kategori.KategoriAdi</span>
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-6 text-left">
+                                                    <p class="text-right">
+                                                        <i class="fa fa-calendar "></i> @m.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="height:170px;">
+                                                <h3 style="margin-top:0px;margin-top:70px;color:#2c3e50"><b><a href="/Home/Makale/@m.ID">@m.Baslik</a></b></h3>
+                                            </div>
+
+
+                                            <div class="col-md-12">
+                                                <div class="small p-2" style="margin-left:-30px;">
+                                                    <p>
+                                                        <i class="fa fa-user-circle"></i> @m.Sahibi.Ad
+                                                        | <i class="fa fa-thumbs-up"></i> @m.Begenileri.Count Beğenilme
+                                                        | <i class="fa fa-comment"></i> @m.Yorumlari.Count Yorum
+                                                        | <i class="fa fa-eye"></i> @m.GoruntulenmeSayisi Görüntülenme
+
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div class="row">
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                    }
+                }
+                else if (soruSirasi < sorularinSayisi && anketSirasi < anketlerinSayisi)
+                {
+                    if (s.OlusturulmaTarihi >= a.OlusturulmaTarihi)
+                    {
+                        soruSirasi = soruSirasi + 1;
+                        <div class="col-sm-12 col-md-12">
+                            <div id="tb-testimonial" class="testimonial testimonial-warning">
+                                <div class="col-md-2 testimonial-desc ">
+                                    <img src="~/Images/help.png" />
+                                </div>
+
+                                <div class="testimonial-section col-md-10 table-bordered pull-right" style="padding-bottom:5px;">
+                                    <div class="row text-center">
+                                        <h3 style="margin-top:0px; color:#2c3e50"><a href="/Home/Soru/@s.ID">@s.Baslik</a></h3>
+                                    </div>
+                                    @if (string.IsNullOrEmpty(s.Icerik) == false && s.Icerik.Length > 70)
+                                    {
+                                        <p>@(s.Icerik.Substring(0, 200) + " . . . ")</p>
+                                        <p class="pull-right">
+                                            <a href="/Home/Soru/@s.ID" class="btn btn-warning btn-sm">devamı <span class="glyphicon glyphicon-chevron-right"></span></a>
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <p>@s.Icerik</p>
+                                    }
+                                </div>
+                                <br />
+                                <div class="row text-center">
+                                    <div class="col-md-12 small p-2 col-md-push-1">
+                                        <p>
+                                            <i class="fa fa-user-circle"></i> @s.Sahibi.Ad
+                                            | <i class="fa fa-comment"></i> @s.Yorumlari.Count Yorum
+                                            | <i class="fa fa-eye"></i> @s.GoruntulenmeSayisi Görüntülenme
+                                            | Kategori : <span class="badge badge-info">@s.Kategori.KategoriAdi</span>
+                                            | <i class="fa fa-calendar"></i> @s.OlusturulmaTarihi <i class="fa fa-clock-o"></i>
+
+                                        </p>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                    }
+                    else if (a.OlusturulmaTarihi >= s.OlusturulmaTarihi)
+                    {
+                        anketSirasi = anketSirasi + 1;
+
+                        <div class="col-sm-12 col-md-12">
+                            <div id="tb-testimonial" class="testimonial testimonial-success">
+
+                                <div class="col-md-2 testimonial-desc" style="margin-top:-20px; ">
+
+                                    <img src="~/Images/anket-1.png" />
+
+                                </div>
+                                <div class="testimonial-section col-md-10 table-bordered">
+                                    <div class="row text-center">
+                                        <h3 style="margin-top:0px;margin-bottom:0px; color:#2c3e50;"><a href="/Home/Anket/@a.ID">@a.Baslik</a></h3>
+                                    </div>
+                                </div>
+
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12 small p-2 text-center col-md-push-1">
+                                        <p>
+                                            <i class="fa fa-user-circle"></i> @a.Sahibi.Ad
+                                            | <i class="fa fa-comment"></i> @a.Yorumu.Count Yorum
+                                            | <i class="fa fa-eye"></i> @s.GoruntulenmeSayisi Görüntülenme
+                                            | Kategori : <span class="badge badge-info">@a.Kategori.KategoriAdi</span>
+                                            | <i class="fa fa-calendar"></i> @a.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+
+                                        </p>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    }
+
+                }
+                else if (makaleSirasi < makalelerinSayisi && anketSirasi < anketlerinSayisi)
+                {
+                    if (m.OlusturulmaTarihi >= a.OlusturulmaTarihi)
+                    {
+                        makaleSirasi = makaleSirasi + 1;
+
+                        <div class="row">
+                            <div class="col-sm-12 contpost">
+                                <div class="row">
+                                    <div class="col-md-12 PostTitle">
+                                        <h3><a href="#" style="color:#2c3e50;"></a></h3>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-sm-4 col-md-4" style="margin-top:10px;">
+                                            <a href="/Home/Makale/@m.ID" class="thumbnail">
+                                                <img src="~/Images/Makale/makale.png" style="height:200px;" />
+                                            </a>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="col-md-12" style="margin-top:10px;">
+                                                <div class="col-md-6">
+                                                    <p style="margin-left:-43px;font-size:15px;">
+                                                        Kategori : <span class="badge badge-info">@m.Kategori.KategoriAdi</span>
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-6 text-left">
+                                                    <p class="text-right">
+                                                        <i class="fa fa-calendar "></i> @m.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="height:170px;">
+                                                <h3 style="margin-top:0px;margin-top:70px;color:#2c3e50"><b><a href="/Home/Makale/@m.ID">@m.Baslik</a></b></h3>
+                                            </div>
+
+
+                                            <div class="col-md-12">
+                                                <div class="small p-2" style="margin-left:-30px;">
+                                                    <p>
+                                                        <i class="fa fa-user-circle"></i> @m.Sahibi.Ad
+                                                        | <i class="fa fa-thumbs-up"></i> @m.Begenileri.Count Beğenilme
+                                                        | <i class="fa fa-comment"></i> @m.Yorumlari.Count Yorum
+                                                        | <i class="fa fa-eye"></i> @m.GoruntulenmeSayisi Görüntülenme
+
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div class="row">
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                    }
+                    else if (a.OlusturulmaTarihi >= m.OlusturulmaTarihi)
+                    {
+                        anketSirasi = anketSirasi + 1;
+
+                        <div class="col-sm-12 col-md-12">
+                            <div id="tb-testimonial" class="testimonial testimonial-success">
+
+                                <div class="col-md-2 testimonial-desc" style="margin-top:-20px; ">
+
+                                    <img src="~/Images/anket-1.png" />
+
+                                </div>
+                                <div class="testimonial-section col-md-10 table-bordered">
+                                    <div class="row text-center">
+                                        <h3 style="margin-top:0px;margin-bottom:0px; color:#2c3e50;"><a href="/Home/Anket/@a.ID">@a.Baslik</a></h3>
+                                    </div>
+                                </div>
+
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12 small p-2 text-center col-md-push-1">
+                                        <p>
+                                            <i class="fa fa-user-circle"></i> @a.Sahibi.Ad
+                                            | <i class="fa fa-comment"></i> @a.Yorumu.Count Yorum
+                                            | <i class="fa fa-eye"></i> @s.GoruntulenmeSayisi Görüntülenme
+                                            | Kategori : <span class="badge badge-info">@a.Kategori.KategoriAdi</span>
+                                            | <i class="fa fa-calendar"></i> @a.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+
+                                        </p>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    }
+
+                }
+                else if (soruSirasi < sorularinSayisi)
+                {
+                    soruSirasi = soruSirasi + 1;
+                    <div class="col-sm-12 col-md-12">
+                        <div id="tb-testimonial" class="testimonial testimonial-warning">
+                            <div class="col-md-2 testimonial-desc ">
+                                <img src="~/Images/help.png" />
+                            </div>
+
+                            <div class="testimonial-section col-md-10 table-bordered pull-right" style="padding-bottom:5px;">
+                                <div class="row text-center">
+                                    <h3 style="margin-top:0px; color:#2c3e50"><a href="/Home/Soru/@s.ID">@s.Baslik</a></h3>
+                                </div>
+                                @if (string.IsNullOrEmpty(s.Icerik) == false && s.Icerik.Length > 70)
+                                {
+                                    <p>@(s.Icerik.Substring(0, 70) + " . . . ")</p>
+                                        <p class="pull-right">
+                                            <a href="/Home/Soru/@s.ID" class="btn btn-warning btn-sm">devamı <span class="glyphicon glyphicon-chevron-right"></span></a>
+                                        </p>
+                                }
+                                else
+                                {
+                                    <p>@s.Icerik</p>
+                                }
+                            </div>
+                            <br />
+                            <div class="row text-center">
+                                <div class="col-md-12 small p-2 col-md-push-1">
+                                    <p>
+                                        <i class="fa fa-user-circle"></i> @s.Sahibi.Ad
+                                        | <i class="fa fa-comment"></i> @s.Yorumlari.Count Yorum
+                                        | <i class="fa fa-eye"></i> @s.GoruntulenmeSayisi Görüntülenme
+                                        | Kategori : <span class="badge badge-info">@s.Kategori.KategoriAdi</span>
+                                        | <i class="fa fa-calendar"></i> @s.OlusturulmaTarihi <i class="fa fa-clock-o"></i>
+
+                                    </p>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+                }
+                else if (makaleSirasi < makalelerinSayisi)
+                {
+                    makaleSirasi = makaleSirasi + 1;
+                    <div class="row">
+                        <div class="col-sm-12 contpost">
+                            <div class="row">
+                                <div class="col-md-12 PostTitle">
+                                    <h3><a href="#" style="color:#2c3e50;"></a></h3>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-sm-4 col-md-4" style="margin-top:10px;">
+                                        <a href="/Home/Makale/@m.ID" class="thumbnail">
+                                            <img src="~/Images/Makale/makale.png" style="height:200px;" />
+                                        </a>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="col-md-12" style="margin-top:10px;">
+                                            <div class="col-md-6">
+                                                <p style="margin-left:-43px;font-size:15px;">
+                                                    Kategori : <span class="badge badge-info">@m.Kategori.KategoriAdi</span>
+                                                </p>
+                                            </div>
+                                            <div class="col-md-6 text-left">
+                                                <p class="text-right">
+                                                    <i class="fa fa-calendar "></i> @m.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="height:170px;">
+                                            <h3 style="margin-top:0px;margin-top:70px;color:#2c3e50"><b><a href="/Home/Makale/@m.ID">@m.Baslik</a></b></h3>
+                                        </div>
+
+
+                                        <div class="col-md-12">
+                                            <div class="small p-2" style="margin-left:-30px;">
+                                                <p>
+                                                    <i class="fa fa-user-circle"></i> @m.Sahibi.Ad
+                                                    | <i class="fa fa-thumbs-up"></i> @m.Begenileri.Count Beğenilme
+                                                    | <i class="fa fa-comment"></i> @m.Yorumlari.Count Yorum
+                                                    | <i class="fa fa-eye"></i> @m.GoruntulenmeSayisi Görüntülenme
+
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="row">
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                }
+                else if (anketSirasi < anketlerinSayisi)
+                {
+                    anketSirasi = anketSirasi + 1;
+                    <div class="col-sm-12 col-md-12">
+                        <div id="tb-testimonial" class="testimonial testimonial-success">
+
+                            <div class="col-md-2 testimonial-desc" style="margin-top:-20px; ">
+
+                                <img src="~/Images/anket-1.png" />
+
+                            </div>
+                            <div class="testimonial-section col-md-10 table-bordered">
+                                <div class="row text-center">
+                                    <h3 style="margin-top:0px;margin-bottom:0px; color:#2c3e50;"><a href="/Home/Anket/@a.ID">@a.Baslik</a></h3>
+                                </div>
+                            </div>
+
+                            <br />
+                            <div class="row">
+                                <div class="col-md-12 small p-2 text-center col-md-push-1">
+                                    <p>
+                                        <i class="fa fa-user-circle"></i> @a.Sahibi.Ad
+                                        | <i class="fa fa-comment"></i> @a.Yorumu.Count Yorum
+                                        | <i class="fa fa-eye"></i> @s.GoruntulenmeSayisi Görüntülenme
+                                        | Kategori : <span class="badge badge-info">@a.Kategori.KategoriAdi</span>
+                                        | <i class="fa fa-calendar"></i> @a.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+
+                                    </p>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                }
+
+            }
+        }
+
+    </div>
+
+    <!--Yazar ol ve Top 10-->
+    <div class="container" style="margin-top:50px;">
+        <div class="col-md-3" style="margin-left:18px;margin-right:-10px;">
+            <img src="~/Images/Yazar olma böyle birşey olabilir.png" style="height:150px;width:240px;" />
+
+        </div>
+        <div class="row col-md-3">
+            @Html.Partial("_PartialTop10")
+        </div>
+    </div>
+
+
+
+
+</div>

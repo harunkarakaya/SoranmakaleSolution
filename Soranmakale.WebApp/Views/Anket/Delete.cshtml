@@ -1,0 +1,82 @@
+﻿@model Soranmakale.Entities.Anket
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-7 col-md-push-4 col-sm-7 col-sm-push-4">
+        <div class="row">
+            <h3 style="color:red;"><i class="fa fa-warning"></i> Bu anketi silme istediğinizden emin misiniz ?</h3>
+            <br />
+            <div>
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Kategori.KategoriAdi)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Kategori.KategoriAdi)
+                    </dd>
+                    <br />
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Baslik)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Baslik)
+                    </dd>
+                    <br />
+                    <dt>
+                        @Html.DisplayNameFor(model => model.OlusturulmaTarihi)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.OlusturulmaTarihi)
+                    </dd>
+                    <br />
+                    <dt>
+                        @Html.DisplayNameFor(model => model.SonOylamaTarihi)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.SonOylamaTarihi)
+                    </dd>
+                    <br />
+                    <dt>
+                        @Html.DisplayNameFor(model => model.KatilimSayisi)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.KatilimSayisi)
+                    </dd>
+                    <br />
+                    <dt>
+                        @Html.DisplayNameFor(model => model.GoruntulenmeSayisi)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.GoruntulenmeSayisi)
+                    </dd>
+                    <br />
+                </dl>
+
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-actions no-color">
+                        <div class="col-md-1 col-md-push-0">
+                            <a href="/Anket/Index" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-arrow-left"></span> Geri Dön</a> &nbsp;
+
+                        </div>
+                        <div class="col-md-push-1 col-md-3">
+                            <input type="submit" value="Sil" class="btn btn-danger btn-sm" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+     </div>
+</div>

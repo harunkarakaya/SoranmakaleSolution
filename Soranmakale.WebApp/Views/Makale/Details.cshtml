@@ -1,0 +1,79 @@
+﻿@model Soranmakale.Entities.Makale
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-7 col-md-push-3 col-sm-7 col-sm-push-3">
+        <div class="row">
+            <div>
+                <h2 style="color:forestgreen;margin-left:415px;"><i class="fa fa-pencil"></i> Makale Detayları</h2>
+                <br />
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Kategori.KategoriAdi)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Kategori.KategoriAdi)
+                    </dd>
+                    <br />
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Baslik)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Baslik)
+                    </dd>
+                    <br />
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Icerik)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Icerik)
+                    </dd>
+                    <br />
+                    <dt>
+                        @Html.DisplayNameFor(model => model.OlusturulmaTarihi)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.OlusturulmaTarihi)
+                    </dd>
+                    <br />
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.BegenilmeSayisi)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.BegenilmeSayisi)
+                    </dd>
+                    <br />
+                    <dt>
+                        @Html.DisplayNameFor(model => model.OkunmaSuresi)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.OkunmaSuresi)
+                    </dd>
+                    <br />
+                    <dt>
+                        @Html.DisplayNameFor(model => model.GoruntulenmeSayisi)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.GoruntulenmeSayisi)
+                    </dd>
+                    <br />
+                </dl>
+            </div>
+            <p>
+                <a href="/Makale/Index" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-arrow-left"></span> Geri Dön</a>
+            </p>
+        </div>
+    </div>
+</div>

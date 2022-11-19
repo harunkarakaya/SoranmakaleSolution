@@ -1,0 +1,61 @@
+﻿@using Soranmakale.WebApp.ViewModel
+@using Soranmakale.Entities.ErrorMessageObject
+
+@model ErrorViewModel
+
+@{
+    ViewBag.Title = "Error";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h3 class="text-center">
+                            @Model.Baslik
+                         
+                       
+                        
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <span class="glyphicon glyphicon-alert" aria-hidden="true"></span>
+                        @Model.Icerik
+
+                    <hr />
+                    @foreach (ErrorMessageObj e in Model.Items)
+                    {
+                        @e.Message<br />
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+@{
+    string js = string.Empty;
+    if (Model.YonlendiriliyorMu)
+    {
+        js = "setTimeout(function () { window.location = '" + Model.YonlendirilmeUrl + "'; }, " +
+            Model.YonlendirilmeSuresi + ")";
+    }
+
+}
+
+<script>
+    $(function(){
+
+    @Html.Raw(js);
+
+    });
+</script>

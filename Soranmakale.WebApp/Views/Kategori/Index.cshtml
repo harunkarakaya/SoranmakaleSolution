@@ -1,0 +1,125 @@
+﻿@using Soranmakale.Entities
+
+@model IEnumerable<Soranmakale.Entities.Kategori>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Kategori ara = ViewBag.Aranan as Kategori;
+}
+<link href="~/Content/Yonetim-Searchbox/searchbox.css" rel="stylesheet" />
+<br />
+<div class="row">
+    <div class="col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4">
+        <div class="row">
+            <h2>Kategori adına göre arama</h2>
+        <div class="col-md-8" style="margin-left:-18px;">
+            @using (Html.BeginForm("Index", "Kategori", FormMethod.Get))
+            {
+                <div id="custom-search-input">
+                    <div class="input-group col-md-12">
+                        <input type="text" class="search-query form-control" value="" name="aranan" placeholder="Kategori Adı" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-danger" type="submit">
+                                <span class=" glyphicon glyphicon-search"></span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            }
+        </div>
+
+
+        </div><br />
+
+        <div class="row">
+            <a href="/Kategori/Create" style="font-size:17px;" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"> Kategori Ekle</span></a>
+            <br /><br />
+            @if (ara != null)
+            {
+                
+                <table class="table table-striped" style="border:2px groove;border-radius:10px;">
+
+                    <tr style="font-size:19px;">
+                        <th>
+                            @Html.DisplayNameFor(model => model.KategoriAdi)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.OlusturulmaTarihi)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Icon)
+                        </th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => ara.KategoriAdi)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => ara.OlusturulmaTarihi)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => ara.Icon)
+                        </td>
+                        <td>
+                            <a href="/Kategori/Edit/@ara.ID" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-edit"></span> Düzenle</a> &nbsp;
+                            <a href="/Kategori/Delete/@ara.ID" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span> Sil</a>
+                        </td>
+                    </tr>
+                </table>
+            }
+            else
+            {
+                    if(ViewBag.mesaj != null)
+                    {
+                        <h2 style="color:red;">@ViewBag.mesaj</h2>
+                    }
+                    else
+                    {
+                        <table class="table table-striped" style="border:2px groove;border-radius:10px;">
+
+                        <tr style="font-size:19px;">
+                            <th>
+                                @Html.DisplayNameFor(model => model.KategoriAdi)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.OlusturulmaTarihi)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Icon)
+                            </th>
+                            <th></th>
+                        </tr>
+                        @foreach (var item in Model)
+                            {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.KategoriAdi)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.OlusturulmaTarihi)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Icon)
+                                </td>
+                                <td>
+                                    <a href="/Kategori/Edit/@item.ID" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-edit"></span> Düzenle</a> &nbsp;
+                                    <a href="/Kategori/Delete/@item.ID" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span> Sil</a>
+                                </td>
+                            </tr>
+                }
+
+            </table>
+
+                    }
+
+
+            }
+
+
+        </div>
+    </div>
+</div>
+
+

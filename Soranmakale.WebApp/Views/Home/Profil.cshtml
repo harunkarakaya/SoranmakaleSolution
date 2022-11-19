@@ -1,0 +1,1195 @@
+﻿@using Soranmakale.WebApp.Models
+@using Soranmakale.BusinessLayer
+@using Soranmakale.Entities
+@using System.Data.Entity;
+
+@model Kullanici
+
+@{
+    ViewBag.Title = "Profil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/IndexTemplate/Anasayfa-makale.css" rel="stylesheet" />
+<link href="~/Content/IndexTemplate/Anasayfa-soru-anket.css" rel="stylesheet" />
+<link href="~/Content/IndexTemplate/3DButton.css" rel="stylesheet" />
+
+
+
+@{ 
+    MakaleManager mm = new MakaleManager();
+    AnketManager anm = new AnketManager();
+    SoruManager sm = new SoruManager();
+
+
+    List<Makale> makaleler = mm.IQueryableList().Where(x => x.Sahibi.ID == Model.ID).ToList();
+    List<Anket> anketler = anm.IQueryableList().Where(x => x.Sahibi.ID == Model.ID).ToList();
+    List<Soru> sorular = sm.IQueryableList().Where(x => x.Sahibi.ID == Model.ID).ToList();
+
+    List<Makale> besmakale = mm.IQueryableList().Where(x => x.Sahibi.ID == Model.ID).OrderByDescending(x => x.Begenileri.Count).ToList();
+    List<Soru> bessoru = sm.IQueryableList().Where(x => x.Sahibi.ID == Model.ID).OrderByDescending(x => x.GoruntulenmeSayisi).ToList();
+    List<Anket> besanket = anm.IQueryableList().Where(x => x.Sahibi.ID == Model.ID).OrderByDescending(x => x.KatilimSayisi).ToList();
+
+    if(sorular.Count > 0)
+    {
+        sorular.Reverse();
+    }
+    if (anketler.Count > 0)
+    {
+        anketler.Reverse();
+    }
+    if (makaleler.Count > 0)
+    {
+        makaleler.Reverse();
+    }
+
+
+
+}
+<link href="~/Content/Profil/Profil.css" rel="stylesheet" />
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 text-center ">
+            <div class="panel panel-default">
+                <div class="userprofile social"style="padding-bottom:80px;">
+                    <div class="userpic" style="margin-top:20px;"> <img src="~/Images/@Model.ProfilFotografi" alt="" class="userpicimg"> </div>
+                    <br />
+                    <h2 class="username" style="margin-top:50px;font-size:30px;padding-bottom:30px;"><b>@Model.Ad @Model.Soyad</b></h2>
+
+                </div>
+
+                <!--Kişinin oluşturduğu anket makale soru sayılarını gösteriyor-->
+                <div class="col-md-12 border-top border-bottom">
+                    <ul class="nav nav-pills pull-left countlist" role="tablist">
+                        <li role="presentation">
+                            <h3>
+                                    @if (Model.Sorulari.Count > 0 && Model.Sorulari != null)
+                                    {
+                                        @Model.Sorulari.Count
+                                    }
+                                
+                                    else
+                                    {
+                                            <p>0</p>
+                                    }
+                                <br>
+
+                                <small>Sorularım</small>
+                            </h3>
+                        </li>
+                        <li role="presentation">
+                            <h3>
+                                @if (Model.Anketleri.Count > 0 && Model.Anketleri != null)
+                                {
+                                    @Model.Anketleri.Count
+                                }
+                                else
+                                {
+                                    <p>0</p>
+                                }<br>
+
+                                <small>Anketlerim</small>
+                            </h3>
+                        </li>
+                        <li role="presentation">
+                            <h3>
+                                @if (Model.Makaleleri.Count > 0 && Model.Makaleleri != null)
+                                {
+                                    @Model.Makaleleri.Count
+                                }
+                                else
+                                {
+                                    <p>0</p>
+                                }<br>
+                                <small>Makalelerim</small>
+                            </h3>
+                        </li>
+                    </ul>
+                    <a href="/Home/Favoriler" class="btn btn-danger followbtn">Favorilerim</a>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <!-- /.col-md-12 -->
+        <div class="col-md-4 col-sm-12 pull-right">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="page-header small" style="margin-top:0px;">Profil Bilgilerim</h1>
+                    <p class="page-subtitle small"><b>Kullanıcı Adı:</b> @Model.KullaniciAdi</p>
+                    <p class="page-subtitle small"><b>Ad:</b> @Model.Ad</p>
+                    <p class="page-subtitle small"><b>soyad:</b> @Model.Soyad</p>
+                    <p class="page-subtitle small"><b>Rütbe Puanı:</b> @Model.RutbePuani</p>
+
+                    @{
+
+                    if (Model.AdminMi)
+                    {
+                        <p class="page-subtitle small"><b>Yetki Durumu:</b> Admin</p>
+                    }
+                    else if (Model.YazarMi)
+                    {
+                        <p class="page-subtitle small"><b>Yetki Durumu:</b> Yazar</p>
+                    }
+                    else
+                    {
+                        <p class="page-subtitle small"><b>Yetki Durumu:</b> Üye</p>
+                    }
+                    }
+                    <button class="btn btn-info btn-xs"><a href="/Home/ProfilDuzenleme" style="color:white;">Güncelle</a></button>
+                </div>
+
+                <div class="clearfix"> </div>
+            </div>
+            <div class="panel panel-default  text-center">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-3"  style="margin-left:35px;margin-top:40px;">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title text-center">En çok beğenilen 5 makalem</h3>
+                                    <div class="pull-right">
+                                    </div>
+                                </div>
+                                <table class="table table-hover" id="dev-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Makale Adı</th>
+                                            <th>Beğeni Sayısı</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                       
+                                            @{
+                                                if (besmakale.Count > 0)
+                                                {
+                                                    int fazlalik = besmakale.Count - 5;
+
+                                                    if (besmakale.Count > 5)
+                                                    {
+                                                        for (int i = 0; i < (besmakale.Count - fazlalik); i++)
+                                                        {
+                                                            <tr>
+                                                                <td>@besmakale[i].Baslik</td>
+                                                                <td>@besmakale[i].Begenileri.Count</td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        for (int i = 0; i < besmakale.Count ; i++)
+                                                        {
+                                                            <tr>
+                                                                <td>@besmakale[i].Baslik</td>
+                                                                <td>@besmakale[i].Begenileri.Count</td>
+                                                            </tr>
+                                                        }
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td></td>
+                                                        <td>Makaleniz bulunmamaktadır.</td>
+                                                        <td></td>
+                                                    </tr>
+                                                }
+
+                                            }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="col-md-12">
+                    <ul class="list-group">
+                        <li class="list-group-item"><span class="fa fa-male"></span> Worked with 1000+ people</li>
+                        <li class="list-group-item"><span class="fa fa-institution"></span> 60+ offices</li>
+                        <li class="list-group-item"><span class="fa fa-user"></span> 50000+ satify customers</li>
+                        <li class="list-group-item"><span class="fa fa-clock-o"></span> Work hours many and many still counting</li>
+                        <li class="list-group-item"><span class="fa fa-heart"></span> Customer satisfaction for servics</li>
+                    </ul>
+                </div>*@
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="panel panel-default  text-center">
+                <div class="container">
+                    <div class="col-md-3" style="margin-left:0px;margin-top:40px;">
+                        <div class="panel panel-success" style="width:300px;">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">En çok görüntülenen 5 sorularım</h3>
+                            </div>
+                            <table class="table table-hover" id="task-table">
+                                <thead>
+                                    <tr>
+                                        <th>Soru Adı</th>
+                                        <th>Görüntülenme</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        if (bessoru.Count > 0)
+                                        {
+                                            int fazlalik = bessoru.Count - 5;
+
+
+                                            if (bessoru.Count > 5)
+                                            {
+                                                for (int i = 0; i < (bessoru.Count - fazlalik); i++)
+                                                {
+                                                    <tr>
+                                                        <td>@bessoru[i].Baslik</td>
+                                                        <td>@bessoru[i].GoruntulenmeSayisi</td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                for (int i = 0; i < bessoru.Count; i++)
+                                                {
+                                                    <tr>
+                                                        <td>@bessoru[i].Baslik</td>
+                                                        <td>@bessoru[i].GoruntulenmeSayisi</td>
+                                                    </tr>
+                                                }
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td></td>
+                                                <td>Sorunuz bulunmamaktadır.</td>
+                                                <td></td>
+                                            </tr>
+                                        }
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+                
+                @*<div class="col-md-12">
+                <ul class="list-group">
+                    <li class="list-group-item"><span class="fa fa-male"></span> Worked with 1000+ people</li>
+                    <li class="list-group-item"><span class="fa fa-institution"></span> 60+ offices</li>
+                    <li class="list-group-item"><span class="fa fa-user"></span> 50000+ satify customers</li>
+                    <li class="list-group-item"><span class="fa fa-clock-o"></span> Work hours many and many still counting</li>
+                    <li class="list-group-item"><span class="fa fa-heart"></span> Customer satisfaction for servics</li>
+                </ul>
+            </div>*@
+                <div class="clearfix"></div>
+            </div>
+
+
+
+            <div class="panel panel-default">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-3" style="margin-left:35px;margin-top:40px;">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title text-center">En çok katılım olan 5 anketim</h3>
+                                    <div class="pull-right">
+                                    </div>
+                                </div>
+                                <table class="table table-hover" id="dev-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Anket Adı</th>
+                                            <th>Katılım Sayısı</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @{
+                                            if (besanket.Count > 0)
+                                            {
+                                                int fazlalik = besanket.Count - 5;
+
+                                                if (besanket.Count > 5)
+                                                {
+                                                    for (int i = 0; i < (besanket.Count - fazlalik); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>@besanket[i].Baslik</td>
+                                                            <td>@besanket[i].KatilimSayisi</td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    for (int i = 0; i < besanket.Count; i++)
+                                                    {
+                                                        <tr>
+                                                            <td>@besanket[i].Baslik</td>
+                                                            <td>@besanket[i].KatilimSayisi</td>
+                                                        </tr>
+                                                    }
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td></td>
+                                                    <td>Anketiniz bulunmamaktadır.</td>
+                                                    <td></td>
+                                                </tr>
+                                            }
+
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+
+
+
+        </div>
+        <div class="col-md-8 col-sm-12 pull-left posttimeline">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="status-upload nopaddingbtm">
+                        <form>
+                            <div class="col-md-4 col-md-push-0">
+                                <a href="/Soru/Create"><button type="button" class="btn btn-warning btn-md btn3d"><i class="fa fa-question" aria-hidden="true"></i> Soru Sor</button></a>
+                            </div>
+
+                            <div class="col-md-3">
+                                <a href="/Anket/Create"><button type="button" class="btn btn-danger btn-md btn3d"><i class="fa fa-pie-chart" aria-hidden="true"></i> Anket Oluştur</button></a>
+                            </div>
+
+                            <div class="col-md-1 col-md-push-1">
+                                @if (CurrentSession.kullanici.YazarMi)
+                                {
+                                    <a href="/Makale/Create"><button style="margin:10px 0px 0px 45px;" type="button" class="btn btn-primary btn-md btn3d"><i class="fa fa-pencil" aria-hidden="true"></i> Makale Yaz</button></a>
+                                }
+                                else
+                                {
+                                    <a href="#"><button style="margin:10px 0px 0px 45px;" type="button" class="btn btn-primary btn-md btn3d"><i class="fa fa-pencil" aria-hidden="true"></i> Makale Yaz</button></a>
+
+                                }
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Status Upload  -->
+                </div>
+            </div>
+            
+            <div class="panel panel-default">
+
+                <!-- Kullanıcının profil resmi ana sayfada her kullanıcının profil resmi için kullanılabilir. -->
+
+                @*<div class="col-md-12">
+                    <div class="media">
+                        <div class="media-left"> <a href="javascript:void(0)"> <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="" class="media-object"> </a> </div>
+                        <div class="media-body">
+                            <h4 class="media-heading">
+                                Lucky Sans<br>
+                            </h4>
+                        </div>
+                    </div>
+                </div>*@
+
+
+                
+                @{
+                    int sorularinSayisi, anketlerinSayisi, makalelerinSayisi, soruSirasi = 0, anketSirasi = 0, makaleSirasi = 0;
+
+                    makalelerinSayisi = makaleler.Count();
+                    sorularinSayisi = sorular.Count();
+                    anketlerinSayisi = anketler.Count();
+
+                    int basacagiIcerikSayisi = makalelerinSayisi + sorularinSayisi + anketlerinSayisi;
+
+                    Soru s = new Soru();
+                    Anket a = new Anket();
+                    Makale m = new Makale();
+
+                    if (sorular.Count > 0)
+                    {
+                        s = sorular[soruSirasi];
+                    }
+                    if (anketler.Count > 0)
+                    {
+                        a = anketler[anketSirasi];
+                    }
+                    if (makaleler.Count > 0)
+                    {
+                        m = makaleler[makaleSirasi];
+                    }
+
+
+
+                    for (int i = 0; i < basacagiIcerikSayisi; i++)
+                    {
+
+                        if (soruSirasi < sorularinSayisi)
+                        {
+                            s = sorular[soruSirasi];
+
+                        }
+                        if (makaleSirasi < makalelerinSayisi)
+                        {
+                            m = makaleler[makaleSirasi];
+
+                        }
+
+                        if (anketSirasi < anketlerinSayisi)
+                        {
+                            a = anketler[anketSirasi];
+
+                        }
+
+
+                        if (soruSirasi < sorularinSayisi && makaleSirasi < makalelerinSayisi && anketSirasi < anketlerinSayisi)
+                        {
+
+                            if (s.OlusturulmaTarihi >= m.OlusturulmaTarihi && s.OlusturulmaTarihi >= a.OlusturulmaTarihi)
+                            {
+                                soruSirasi = soruSirasi + 1;
+
+                                //Partial'lara alınacaklar
+
+                                <div class="col-sm-11 col-md-11">
+                                    <div id="tb-testimonial" class="testimonial testimonial-warning">
+                                        <div class="col-md-2 testimonial-desc ">
+                                            <img src="~/Images/help.png" />
+                                        </div>
+
+                                        <div class="testimonial-section col-md-9 table-bordered pull-right" style="padding-bottom:5px;">
+                                            <div class="row text-center">
+                                                <h3 style="margin-top:0px; color:#2c3e50"><a href="/Home/Soru/@s.ID">@s.Baslik</a></h3>
+                                            </div>
+                                            @if (string.IsNullOrEmpty(s.Icerik) == false && s.Icerik.Length > 47)
+                                            {
+                                                <p>@(s.Icerik.Substring(0, 47) + " . . . ")</p>
+                                                    <p class="pull-right">
+                                                        <a href="/Home/Soru/@s.ID" class="btn btn-warning btn-sm">devamı <span class="glyphicon glyphicon-chevron-right"></span></a>
+                                                    </p>
+                                            }
+                                            else
+                                            {
+                                                <p>@s.Icerik</p>
+                                            }
+                                        </div>
+                                        <br />
+                                        <div class="row text-center">
+                                            <div class="col-md-12 small p-2 col-md-push-2">
+                                                <p>
+                                                    <i class="fa fa-comment"></i> @s.Yorumlari.Count Yorum
+                                                    | <i class="fa fa-eye"></i> @s.GoruntulenmeSayisi Görüntülenme
+                                                    | Kategori : <span class="badge badge-info">@s.Kategori.KategoriAdi</span>
+                                                    | <i class="fa fa-calendar"></i> @s.OlusturulmaTarihi <i class="fa fa-clock-o"></i>
+
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="btn-group pull-right postbtn" style="margin-top:30px;margin-right:-35px;">
+                                            <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
+                                            <ul class="dropdown-menu text-center" role="menu">
+
+                                                @using (Html.BeginForm())
+                                                {
+                                                    <li class="text-center"><a href="/Soru/Edit/@s.ID" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> Düzenle</a></li>
+                                                }
+
+
+                                                @using (Html.BeginForm())
+                                                {
+                                                    <li class="text-center"><a href="/Soru/Delete/@s.ID" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Sil</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+                            else if (m.OlusturulmaTarihi >= s.OlusturulmaTarihi && m.OlusturulmaTarihi >= a.OlusturulmaTarihi)
+                            {
+                                makaleSirasi = makaleSirasi + 1;
+
+                                //Partial'lara alınacaklar
+                                <div class="row">
+                                    <div class="col-sm-11 contpost">
+                                        <div class="row">
+                                            <div class="col-md-12 PostTitle">
+                                                <h3><a href="#" style="color:#2c3e50;"></a></h3>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="col-sm-4 col-md-4" style="margin-top:10px;">
+                                                    <a href="/Home/Makale/@m.ID" class="thumbnail">
+                                                        <img src="~/Images/Makale/makale.png" style="height:200px;" />
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="col-md-12" style="margin-top:10px;">
+                                                        <div class="col-md-5">
+                                                            <p style="margin-left:-43px;font-size:15px;">
+                                                                Kategori : <span class="badge badge-info">@m.Kategori.KategoriAdi</span>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-md-7 text-left">
+                                                            <p class="text-right">
+                                                                <i class="fa fa-calendar "></i> @m.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" style="height:170px;">
+                                                        <h3 style="margin-top:0px;margin-top:70px;color:#2c3e50"><b><a href="/Home/Makale/@m.ID">@m.Baslik</a></b></h3>
+                                                    </div>
+
+
+                                                    <div class="col-md-12">
+                                                        <div class="small p-2" style="margin-left:-30px;">
+                                                            <p>
+                                                                <i class="fa fa-thumbs-up"></i> @m.Begenileri.Count Beğenilme
+                                                                | <i class="fa fa-comment"></i> @m.Yorumlari.Count Yorum
+                                                                | <i class="fa fa-eye"></i> @m.GoruntulenmeSayisi Görüntülenme
+
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+
+                                        </div>
+
+                                        <div class="btn-group pull-right postbtn" style="margin-top:25px;margin-right:-20px;">
+                                            <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
+                                            <ul class="dropdown-menu pull-right" role="menu">
+
+                                                @using (Html.BeginForm())
+                                                {
+                                                    <li class="text-center"><a href="/Makale/Edit/@m.ID" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> Düzenle</a></li>
+                                                }
+
+
+                                                @using (Html.BeginForm())
+                                                {
+                                                    <li class="text-center"><a href="/Makale/Delete/@m.ID" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Sil</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            }
+                            else if (a.OlusturulmaTarihi >= s.OlusturulmaTarihi && a.OlusturulmaTarihi >= m.OlusturulmaTarihi)
+                            {
+                                anketSirasi = anketSirasi + 1;
+
+                                //Partial'lara alınacaklar
+                                <div class="col-sm-11 col-md-11">
+                                    <div id="tb-testimonial" class="testimonial testimonial-success">
+
+                                        <div class="col-md-2 testimonial-desc" style="margin-top:-20px; ">
+
+                                            <img src="~/Images/anket-1.png" />
+
+                                        </div>
+                                        <div class="testimonial-section col-md-9 table-bordered pull-right">
+                                            <div class="row text-center">
+                                                <h3 style="margin-top:0px;margin-bottom:0px; color:#2c3e50;"><a href="/Home/Anket/@a.ID">@a.Baslik</a></h3>
+                                            </div>
+                                        </div>
+
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-12 small p-2 text-center col-md-push-2">
+                                                <p>
+                                                    <i class="fa fa-comment"></i> @a.Yorumu.Count Yorum
+                                                    | <i class="fa fa-eye"></i> @a.GoruntulenmeSayisi Görüntülenme
+                                                    | Kategori : <span class="badge badge-info">@a.Kategori.KategoriAdi</span>
+                                                    | <i class="fa fa-calendar"></i> @a.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="btn-group pull-right postbtn" style="margin-top:30px;margin-right:-35px;">
+                                            <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
+                                            <ul class="dropdown-menu pull-right" role="menu">
+
+                                                @using (Html.BeginForm())
+                                                {
+                                                    <li class="text-center"><a href="/Anket/Delete/@a.ID" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Sil</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else if (soruSirasi < sorularinSayisi && makaleSirasi < makalelerinSayisi)
+                        {
+
+                            if (s.OlusturulmaTarihi >= m.OlusturulmaTarihi)
+                            {
+                                soruSirasi = soruSirasi + 1;
+
+                                <div class="col-sm-11 col-md-11">
+                                    <div id="tb-testimonial" class="testimonial testimonial-warning">
+                                        <div class="col-md-2 testimonial-desc ">
+                                            <img src="~/Images/help.png" />
+                                        </div>
+
+                                        <div class="testimonial-section col-md-9 table-bordered pull-right" style="padding-bottom:5px;">
+                                            <div class="row text-center">
+                                                <h3 style="margin-top:0px; color:#2c3e50"><a href="/Home/Soru/@s.ID">@s.Baslik</a></h3>
+                                            </div>
+                                            @if (string.IsNullOrEmpty(s.Icerik) == false && s.Icerik.Length > 70)
+                                            {
+                                                <p>@(s.Icerik.Substring(0, 200) + " . . . ")</p>
+                                                <p class="pull-right">
+                                                    <a href="/Home/Soru/@s.ID" class="btn btn-warning btn-sm">devamı <span class="glyphicon glyphicon-chevron-right"></span></a>
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <p>@s.Icerik</p>
+                                            }
+                                        </div>
+                                        <br />
+                                        <div class="row text-center">
+                                            <div class="col-md-12 small p-2 col-md-push-2">
+                                                <p>
+                                                    <i class="fa fa-comment"></i> @s.Yorumlari.Count Yorum
+                                                    | <i class="fa fa-eye"></i> @s.GoruntulenmeSayisi Görüntülenme
+                                                    | Kategori : <span class="badge badge-info">@s.Kategori.KategoriAdi</span>
+                                                    | <i class="fa fa-calendar"></i> @s.OlusturulmaTarihi <i class="fa fa-clock-o"></i>
+
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="btn-group pull-right postbtn" style="margin-top:30px;margin-right:-35px;">
+                                            <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
+                                            <ul class="dropdown-menu pull-right" role="menu">
+
+                                                @using (Html.BeginForm())
+                                                {
+                                                    <li class="text-center"><a href="/Soru/Edit/@s.ID" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> Düzenle</a></li>
+                                                }
+
+
+                                                @using (Html.BeginForm())
+                                                {
+                                                    <li class="text-center"><a href="/Soru/Delete/@s.ID" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Sil</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            }
+                            else if (m.OlusturulmaTarihi >= s.OlusturulmaTarihi)
+                            {
+                                makaleSirasi = makaleSirasi + 1;
+                                <div class="row">
+                                    <div class="col-sm-12 contpost">
+                                        <div class="row">
+                                            <div class="col-md-12 PostTitle">
+                                                <h3><a href="#" style="color:#2c3e50;"></a></h3>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="col-sm-4 col-md-4" style="margin-top:10px;">
+                                                    <a href="/Home/Makale/@m.ID" class="thumbnail">
+                                                        <img src="~/Images/Makale/makale.png" style="height:200px;" />
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="col-md-12" style="margin-top:10px;">
+                                                        <div class="col-md-5">
+                                                            <p style="margin-left:-43px;font-size:15px;">
+                                                                Kategori : <span class="badge badge-info">@m.Kategori.KategoriAdi</span>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-md-7 text-left">
+                                                            <p class="text-right">
+                                                                <i class="fa fa-calendar "></i> @m.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" style="height:170px;">
+                                                        <h3 style="margin-top:0px;margin-top:70px;color:#2c3e50"><b><a href="/Home/Makale/@m.ID">@m.Baslik</a></b></h3>
+                                                    </div>
+
+
+                                                    <div class="col-md-12">
+                                                        <div class="small p-2" style="margin-left:-30px;">
+                                                            <p>
+                                                                <i class="fa fa-thumbs-up"></i> @m.Begenileri.Count Beğenilme
+                                                                | <i class="fa fa-comment"></i> @m.Yorumlari.Count Yorum
+                                                                | <i class="fa fa-eye"></i> @m.GoruntulenmeSayisi Görüntülenme
+
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+
+                                        </div>
+
+                                        <div class="btn-group pull-right postbtn" style="margin-top:25px;margin-right:-20px;">
+                                            <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
+                                            <ul class="dropdown-menu pull-right" role="menu">
+
+                                                @using (Html.BeginForm())
+                                                {
+                                                    <li class="text-center"><a href="/Makale/Edit/@m.ID" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> Düzenle</a></li>
+                                                }
+
+
+                                                @using (Html.BeginForm())
+                                                {
+                                                    <li class="text-center"><a href="/Makale/Delete/@m.ID" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Sil</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            }
+                        }
+                        else if (soruSirasi < sorularinSayisi && anketSirasi < anketlerinSayisi)
+                        {
+                            if (s.OlusturulmaTarihi >= a.OlusturulmaTarihi)
+                            {
+                                soruSirasi = soruSirasi + 1;
+                                <div class="col-sm-11 col-md-11">
+                                    <div id="tb-testimonial" class="testimonial testimonial-warning">
+                                        <div class="col-md-2 testimonial-desc ">
+                                            <img src="~/Images/help.png" />
+                                        </div>
+
+                                        <div class="testimonial-section col-md-9 table-bordered pull-right" style="padding-bottom:5px;">
+                                            <div class="row text-center">
+                                                <h3 style="margin-top:0px; color:#2c3e50"><a href="/Home/Soru/@s.ID">@s.Baslik</a></h3>
+                                            </div>
+                                            @if (string.IsNullOrEmpty(s.Icerik) == false && s.Icerik.Length > 70)
+                                            {
+                                                <p>@(s.Icerik.Substring(0, 200) + " . . . ")</p>
+                                                <p class="pull-right">
+                                                    <a href="/Home/Soru/@s.ID" class="btn btn-warning btn-sm">devamı <span class="glyphicon glyphicon-chevron-right"></span></a>
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <p>@s.Icerik</p>
+                                            }
+                                        </div>
+                                        <br />
+                                        <div class="row text-center">
+                                            <div class="col-md-12 small p-2 col-md-push-2">
+                                                <p>
+                                                    <i class="fa fa-comment"></i> @s.Yorumlari.Count Yorum
+                                                    | <i class="fa fa-eye"></i> @s.GoruntulenmeSayisi Görüntülenme
+                                                    | Kategori : <span class="badge badge-info">@s.Kategori.KategoriAdi</span>
+                                                    | <i class="fa fa-calendar"></i> @s.OlusturulmaTarihi <i class="fa fa-clock-o"></i>
+
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="btn-group pull-right postbtn" style="margin-top:30px;margin-right:-35px;">
+                                            <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
+                                            <ul class="dropdown-menu pull-right" role="menu">
+
+                                                @using (Html.BeginForm())
+                                                {
+                                                    <li class="text-center"><a href="/Soru/Edit/@s.ID" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> Düzenle</a></li>
+                                                }
+
+
+                                                @using (Html.BeginForm())
+                                                {
+                                                    <li class="text-center"><a href="/Soru/Delete/@s.ID" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Sil</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                            }
+                            else if (a.OlusturulmaTarihi >= s.OlusturulmaTarihi)
+                            {
+                                anketSirasi = anketSirasi + 1;
+
+                                <div class="col-sm-11 col-md-11">
+                                    <div id="tb-testimonial" class="testimonial testimonial-success">
+
+                                        <div class="col-md-2 testimonial-desc" style="margin-top:-20px; ">
+
+                                            <img src="~/Images/anket-1.png" />
+
+                                        </div>
+                                        <div class="testimonial-section col-md-9 table-bordered pull-right">
+                                            <div class="row text-center">
+                                                <h3 style="margin-top:0px;margin-bottom:0px; color:#2c3e50;"><a href="/Home/Anket/@a.ID">@a.Baslik</a></h3>
+                                            </div>
+                                        </div>
+
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-12 small p-2 text-center col-md-push-2">
+                                                <p>
+                                                    <i class="fa fa-comment"></i> @a.Yorumu.Count Yorum
+                                                    | <i class="fa fa-eye"></i> @a.GoruntulenmeSayisi Görüntülenme
+                                                    | Kategori : <span class="badge badge-info">@a.Kategori.KategoriAdi</span>
+                                                    | <i class="fa fa-calendar"></i> @a.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="btn-group pull-right postbtn" style="margin-top:30px;margin-right:-35px;">
+                                            <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
+                                            <ul class="dropdown-menu pull-right" role="menu">
+
+                                                @using (Html.BeginForm())
+                                                {
+                                                    <li class="text-center"><a href="/Anket/Delete/@a.ID" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Sil</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            }
+
+                        }
+                        else if (makaleSirasi < makalelerinSayisi && anketSirasi < anketlerinSayisi)
+                        {
+                            if (m.OlusturulmaTarihi >= a.OlusturulmaTarihi)
+                            {
+                                makaleSirasi = makaleSirasi + 1;
+
+                                <div class="row">
+                                    <div class="col-sm-12 contpost">
+                                        <div class="row">
+                                            <div class="col-md-12 PostTitle">
+                                                <h3><a href="#" style="color:#2c3e50;"></a></h3>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="col-sm-4 col-md-4" style="margin-top:10px;">
+                                                    <a href="/Home/Makale/@m.ID" class="thumbnail">
+                                                        <img src="~/Images/Makale/makale.png" style="height:200px;" />
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="col-md-12" style="margin-top:10px;">
+                                                        <div class="col-md-5">
+                                                            <p style="margin-left:-43px;font-size:15px;">
+                                                                Kategori : <span class="badge badge-info">@m.Kategori.KategoriAdi</span>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-md-7 text-left">
+                                                            <p class="text-right">
+                                                                <i class="fa fa-calendar "></i> @m.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" style="height:170px;">
+                                                        <h3 style="margin-top:0px;margin-top:70px;color:#2c3e50"><b><a href="/Home/Makale/@m.ID">@m.Baslik</a></b></h3>
+                                                    </div>
+
+
+                                                    <div class="col-md-12">
+                                                        <div class="small p-2" style="margin-left:-30px;">
+                                                            <p>
+                                                                <i class="fa fa-thumbs-up"></i> @m.Begenileri.Count Beğenilme
+                                                                | <i class="fa fa-comment"></i> @m.Yorumlari.Count Yorum
+                                                                | <i class="fa fa-eye"></i> @m.GoruntulenmeSayisi Görüntülenme
+
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+
+                                        </div>
+
+                                        <div class="btn-group pull-right postbtn" style="margin-top:25px;margin-right:-20px;">
+                                            <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
+                                            <ul class="dropdown-menu pull-right" role="menu">
+
+                                                @using (Html.BeginForm())
+                                                {
+                                                    <li class="text-center"><a href="/Makale/Edit/@m.ID" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> Düzenle</a></li>
+                                                }
+
+
+                                                @using (Html.BeginForm())
+                                                {
+                                                    <li class="text-center"><a href="/Makale/Delete/@m.ID" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Sil</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            }
+                            else if (a.OlusturulmaTarihi >= m.OlusturulmaTarihi)
+                            {
+                                anketSirasi = anketSirasi + 1;
+
+                                <div class="col-sm-11 col-md-11">
+                                    <div id="tb-testimonial" class="testimonial testimonial-success">
+
+                                        <div class="col-md-2 testimonial-desc" style="margin-top:-20px; ">
+
+                                            <img src="~/Images/anket-1.png" />
+
+                                        </div>
+                                        <div class="testimonial-section col-md-9 table-bordered pull-right">
+                                            <div class="row text-center">
+                                                <h3 style="margin-top:0px;margin-bottom:0px; color:#2c3e50;"><a href="/Home/Anket/@a.ID">@a.Baslik</a></h3>
+                                            </div>
+                                        </div>
+
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-12 small p-2 text-center col-md-push-2">
+                                                <p>
+                                                    <i class="fa fa-comment"></i> @a.Yorumu.Count Yorum
+                                                    | <i class="fa fa-eye"></i> @a.GoruntulenmeSayisi Görüntülenme
+                                                    | Kategori : <span class="badge badge-info">@a.Kategori.KategoriAdi</span>
+                                                    | <i class="fa fa-calendar"></i> @a.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="btn-group pull-right postbtn" style="margin-top:30px;margin-right:-35px;">
+                                            <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
+                                            <ul class="dropdown-menu pull-right" role="menu">
+
+                                                @using (Html.BeginForm())
+                                                {
+                                                    <li class="text-center"><a href="/Anket/Delete/@a.ID" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Sil</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            }
+
+                        }
+                        else if (soruSirasi < sorularinSayisi)
+                        {
+                            soruSirasi = soruSirasi + 1;
+                            <div class="col-sm-11 col-md-11">
+                                <div id="tb-testimonial" class="testimonial testimonial-warning">
+                                    <div class="col-md-2 testimonial-desc ">
+                                        <img src="~/Images/help.png" />
+                                    </div>
+
+                                    <div class="testimonial-section col-md-9 table-bordered pull-right" style="padding-bottom:5px;">
+                                        <div class="row text-center">
+                                            <h3 style="margin-top:0px; color:#2c3e50"><a href="/Home/Soru/@s.ID">@s.Baslik</a></h3>
+                                        </div>
+                                        @if (string.IsNullOrEmpty(s.Icerik) == false && s.Icerik.Length > 70)
+                                        {
+                                            <p>@(s.Icerik.Substring(0, 200) + " . . . ")</p>
+                                            <p class="pull-right">
+                                                <a href="/Home/Soru/@s.ID" class="btn btn-warning btn-sm">devamı <span class="glyphicon glyphicon-chevron-right"></span></a>
+                                            </p>
+                                        }
+                                        else
+                                        {
+                                            <p>@s.Icerik</p>
+                                        }
+                                    </div>
+                                    <br />
+                                    <div class="row text-center">
+                                        <div class="col-md-12 small p-2 col-md-push-2">
+                                            <p>
+                                                <i class="fa fa-comment"></i> @s.Yorumlari.Count Yorum
+                                                | <i class="fa fa-eye"></i> @s.GoruntulenmeSayisi Görüntülenme
+                                                | Kategori : <span class="badge badge-info">@s.Kategori.KategoriAdi</span>
+                                                | <i class="fa fa-calendar"></i> @s.OlusturulmaTarihi <i class="fa fa-clock-o"></i>
+
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="btn-group pull-right postbtn" style="margin-top:30px;margin-right:-35px;">
+                                        <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
+                                        <ul class="dropdown-menu pull-right" role="menu">
+
+                                            @using (Html.BeginForm())
+                                            {
+                                                <li class="text-center"><a href="/Soru/Edit/@s.ID" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> Düzenle</a></li>
+                                            }
+
+
+                                            @using (Html.BeginForm())
+                                            {
+                                                <li class="text-center"><a href="/Soru/Delete/@s.ID" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Sil</a></li>
+                                            }
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                        }
+                        else if (makaleSirasi < makalelerinSayisi)
+                        {
+                            makaleSirasi = makaleSirasi + 1;
+                            <div class="row">
+                                <div class="col-sm-12 contpost">
+                                    <div class="row">
+                                        <div class="col-md-12 PostTitle">
+                                            <h3><a href="#" style="color:#2c3e50;"></a></h3>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-sm-4 col-md-4" style="margin-top:10px;">
+                                                <a href="/Home/Makale/@m.ID" class="thumbnail">
+                                                    <img src="~/Images/Makale/makale.png" style="height:200px;" />
+                                                </a>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="col-md-12" style="margin-top:10px;">
+                                                    <div class="col-md-5">
+                                                        <p style="margin-left:-43px;font-size:15px;">
+                                                            Kategori : <span class="badge badge-info">@m.Kategori.KategoriAdi</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-md-7 text-left">
+                                                        <p class="text-right">
+                                                            <i class="fa fa-calendar "></i> @m.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="row" style="height:170px;">
+                                                    <h3 style="margin-top:0px;margin-top:70px;color:#2c3e50"><b><a href="/Home/Makale/@m.ID">@m.Baslik</a></b></h3>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="small p-2" style="margin-left:-30px;">
+                                                        <p>
+                                                            <i class="fa fa-thumbs-up"></i> @m.Begenileri.Count Beğenilme
+                                                            | <i class="fa fa-comment"></i> @m.Yorumlari.Count Yorum
+                                                            | <i class="fa fa-eye"></i> @m.GoruntulenmeSayisi Görüntülenme
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="btn-group pull-right postbtn" style="margin-top:25px;margin-right:-20px;">
+                                        <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
+                                        <ul class="dropdown-menu pull-right" role="menu">
+
+                                            @using (Html.BeginForm())
+                                            {
+                                                <li class="text-center"><a href="/Makale/Edit/@m.ID" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> Düzenle</a></li>
+                                            }
+                                            @using (Html.BeginForm())
+                                            {
+                                                <li class="text-center"><a href="/Makale/Delete/@m.ID" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Sil</a></li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else if (anketSirasi < anketlerinSayisi)
+                        {
+                            anketSirasi = anketSirasi + 1;
+                            <div class="col-sm-11 col-md-11">
+                                <div id="tb-testimonial" class="testimonial testimonial-success">
+
+                                    <div class="col-md-2 testimonial-desc" style="margin-top:-20px; ">
+
+                                        <img src="~/Images/anket-1.png" />
+
+                                    </div>
+                                    <div class="testimonial-section col-md-9 table-bordered pull-right">
+                                        <div class="row text-center">
+                                            <h3 style="margin-top:0px;margin-bottom:0px; color:#2c3e50;"><a href="/Home/Anket/@a.ID">@a.Baslik</a></h3>
+                                        </div>
+                                    </div>
+
+                                    <br />
+                                    <div class="row">
+                                        <div class="col-md-12 small p-2 text-center col-md-push-2">
+                                            <p>
+                                                <i class="fa fa-comment"></i> @a.Yorumu.Count Yorum
+                                                | <i class="fa fa-eye"></i> @a.GoruntulenmeSayisi Görüntülenme
+                                                | Kategori : <span class="badge badge-info">@a.Kategori.KategoriAdi</span>
+                                                | <i class="fa fa-calendar"></i> @a.OlusturulmaTarihi <i class="fa fa-clock-o "></i>
+
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="btn-group pull-right postbtn" style="margin-top:30px;margin-right:-35px;">
+                                        <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
+                                        <ul class="dropdown-menu pull-right" role="menu">
+                                            @using (Html.BeginForm())
+                                            {
+                                                <li class="text-center"><a href="/Anket/Delete/@a.ID" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Sil</a></li>
+                                            }
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        }
+
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+</div>

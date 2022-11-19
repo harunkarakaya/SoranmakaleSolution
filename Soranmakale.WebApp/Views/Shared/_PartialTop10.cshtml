@@ -1,0 +1,246 @@
+﻿@using Soranmakale.BusinessLayer
+@using Soranmakale.Entities
+@using System.Data.Entity;
+
+<link href="~/Content/PartialViews/EnFazlaMakaleYazanlar.css" rel="stylesheet" />
+<link href="~/Content/PartialViews/EnCokBegenilenMakaleler.css" rel="stylesheet" />
+
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">En FAZLA MAKALE YAZANLAR</h3>
+                    <div class="pull-right">
+                    </div>
+                </div>
+                <table class="table table-hover" id="dev-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Makale Adı</th>
+                            <th>Makale Sayısı</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+@*@{
+    MakaleManager mm = new MakaleManager();
+    KullaniciManager km = new KullaniciManager();
+
+    List<Kullanici> kullanicilar = km.IQueryableList().Include("Makaleleri").Select(x => x.Makaleleri).ToList();
+
+    if (makaleler.Count > 0)
+    {
+        int fazlalik = makaleler.Count - 5;
+
+        if (makaleler.Count > 5)
+        {
+            for (int i = 0; i < (makaleler.Count - fazlalik); i++)
+            {
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@makaleler[i].Baslik</td>
+                    <td>@makaleler[i].Begenileri.Count</td>
+                </tr>
+            }
+        }
+        else
+        {
+            for (int i = 0; i < makaleler.Count; i++)
+            {
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@makaleler[i].Baslik</td>
+                    <td>@makaleler[i].Begenileri.Count</td>
+                </tr>
+            }
+        }
+
+    }
+    else
+    {
+        <tr>
+            <td></td>
+            <td>Makaleniz bulunmamaktadır.</td>
+            <td></td>
+        </tr>
+    }
+}*@
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-md-3">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">EN ÇOK BEĞENİLEN MAKALELER</h3>
+            </div>
+            <div class="panel-body">
+                <input type="text" class="form-control" id="task-table-filter" data-action="filter" data-filters="#task-table" placeholder="Filter Tasks" />
+            </div>
+            <table class="table table-hover" id="task-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Makale Adı</th>
+                        <th>Beğenilme</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Site Wireframes</td>
+                        <td>112</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Mobile Landing Page</td>
+                        <td>56</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Add SEO tags</td>
+                        <td>48</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Migrate to Bootstrap 3</td>
+                        <td>45</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Update jQuery library</td>
+                        <td>25</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Issues in IE7</td>
+                        <td>17</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Bugs from Sprint 14</td>
+                        <td>12</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+        
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">En FAZLA KATILIM OLAN ANKET</h3>
+                    <div class="pull-right">
+                    </div>
+                </div>
+                <table class="table table-hover" id="dev-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Anket Adı</th>
+                            <th>Katılan Kişi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Kilgore</td>
+                            <td>78</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Bob</td>
+                            <td>43</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Holden</td>
+                            <td>15</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>JohnThomas</td>
+                            <td>12</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Annie Marie</td>
+                            <td>5</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-md-3">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">EN ÇOK ANKET CEVAPLAYANLAR</h3>
+            </div>
+            <div class="panel-body">
+                <input type="text" class="form-control" id="task-table-filter" data-action="filter" data-filters="#task-table" placeholder="Filter Tasks" />
+            </div>
+            <table class="table table-hover" id="task-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Anket Adı</th>
+                        <th>Cevaplanma</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Site Wireframes</td>
+                        <td>112</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Mobile Landing Page</td>
+                        <td>56</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Add SEO tags</td>
+                        <td>48</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Migrate to Bootstrap 3</td>
+                        <td>45</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Update jQuery library</td>
+                        <td>25</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Issues in IE7</td>
+                        <td>17</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Bugs from Sprint 14</td>
+                        <td>12</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

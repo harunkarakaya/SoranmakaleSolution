@@ -1,0 +1,58 @@
+﻿@model Soranmakale.Entities.Soru
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-4 col-md-offset-3 col-sm-4 col-sm-offset-3">
+        <div class="row">
+            <br />
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-horizontal">
+                    <img src="~/Images/Soru-Sayfası/soru-10.png" style="width:40%;margin-left:230px;"/>
+                    <hr />
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Baslik, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.TextAreaFor(model => model.Baslik, 2, 66, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Baslik, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Icerik, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.TextAreaFor(model => model.Icerik, 10, 66, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Icerik, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.KategoriID, "KategoriID", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DropDownList("KategoriID", null, htmlAttributes: new { @class = "" })
+                            @Html.ValidationMessageFor(model => model.KategoriID, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-3 col-md-push-2">
+                            <a href="/Home/YeniIcerikler" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-arrow-left"></span> Geri Dön</a> &nbsp;
+                        </div>
+                        <div class="col-md-push-7 col-md-3">
+                            <input type="submit" value="Sor" class="btn btn-success" />
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

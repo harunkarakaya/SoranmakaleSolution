@@ -1,0 +1,163 @@
+﻿@using Soranmakale.Entities
+
+@model IEnumerable<Soranmakale.Entities.Anket>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Anket ara = ViewBag.Aranan as Anket;
+
+}
+<link href="~/Content/Yonetim-Searchbox/searchbox.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="col-md-5 col-md-push-3 col-sm-5 col-sm-push-3">
+        <div class="row">
+            <h2>Anket adına göre arama</h2>
+
+            <div class="col-md-6" style="margin-left:-18px;">
+            @using (Html.BeginForm("Index", "Anket", FormMethod.Get))
+            {
+                <div id="custom-search-input">
+                    <div class="input-group col-md-12">
+                        <input type="text" class="search-query form-control" value="" name="aranan" placeholder="Anket Adı" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-danger" type="submit">
+                                <span class=" glyphicon glyphicon-search"></span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+             }
+            </div>
+        </div><br />
+
+        <div class="row">
+            @if (ara != null)
+            {
+
+                <table class="table table-striped" style="border:2px groove;border-radius:10px;">
+                    <tr style="font-size:19px;">
+                        <th>
+                            @Html.DisplayNameFor(model => model.Kategori.KategoriAdi)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Baslik)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.KatilimSayisi)
+                        </th>
+                        <th></th>
+                    </tr>
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => ara.Kategori.KategoriAdi)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => ara.Baslik)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => ara.KatilimSayisi)
+                            </td>
+                            <td>
+                                <a href="/Anket/Details/@ara.ID" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-list"></span> Detayları</a> &nbsp;
+                                <a href="/Anket/Delete/@ara.ID" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span> Sil</a> &nbsp;
+                                <button type="button" class="btn btn-success btn-sm" data-anket-id="@ara.ID" data-toggle="modal" data-target="#modal_yorum"><i class="fa fa-comment"></i> Yorumlar</button>
+                            </td>
+                        </tr>
+
+                </table>
+
+            }
+            else
+            {
+                if (ViewBag.mesaj != null)
+                {
+                    <h2 style="color:red;">@ViewBag.mesaj</h2>
+                }
+                else
+                {
+                    <table class="table table-striped" style="border:2px groove;border-radius:10px;">
+                        <tr style="font-size:19px;">
+                            <th>
+                                @Html.DisplayNameFor(model => model.Kategori.KategoriAdi)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Baslik)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.KatilimSayisi)
+                            </th>
+                            <th></th>
+                        </tr>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Kategori.KategoriAdi)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Baslik)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.KatilimSayisi)
+                                </td>
+                                <td>
+                                    <a href="/Anket/Details/@item.ID" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-list"></span> Detayları</a> &nbsp;
+                                    <a href="/Anket/Delete/@item.ID" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span> Sil</a> &nbsp;
+                                    <button type="button" class="btn btn-success btn-sm" data-anket-id="@item.ID" data-toggle="modal" data-target="#modal_yorum"><i class="fa fa-comment"></i> Yorumlar</button>
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+
+
+                }
+
+
+            }
+
+
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+
+    var anketid = -1;
+    var modalCommentBodyId = "#myModal_Body";
+
+    $(function () {
+
+        $('#modal_yorum').on('show.bs.modal', function (e) {
+
+            var btn = $(e.relatedTarget);
+            anketid = btn.data("anket-id");
+
+            $(modalCommentBodyId).load("/AnketinYorumu/Index/" + anketid);
+        })
+
+    });
+</script>
+
+<div class="modal fade" id="modal_yorum" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" id="myModal_Header">
+                <h5 class="modal-title" id="exampleModalLabel">Yorumlar</h5>
+            </div>
+
+            <div class="modal-body" id="myModal_Body">
+
+            </div>
+
+            <div class="modal-footer" id="myModal_Footer">
+                <button type="button" class="btn btn-primary btn-md" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>

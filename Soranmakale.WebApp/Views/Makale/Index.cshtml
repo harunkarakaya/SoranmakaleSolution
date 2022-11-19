@@ -1,0 +1,172 @@
+﻿@using Soranmakale.Entities
+
+@model IEnumerable<Soranmakale.Entities.Makale>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Makale ara = ViewBag.Aranan as Makale;
+
+}
+<link href="~/Content/Yonetim-Searchbox/searchbox.css" rel="stylesheet" />
+<br />
+<div class="row">
+    <div class="col-md-8 col-md-push-2 col-sm-8 col-sm-push-2">
+        <div class="row">
+            <div class="col-md-5" style="margin-left:-18px;">
+                <h2>Makale adına göre arama</h2>
+
+                @using (Html.BeginForm("Index", "Makale", FormMethod.Get))
+                {
+                    <div id="custom-search-input">
+                        <div class="input-group col-md-12">
+                            <input type="text" class="search-query form-control" value="" name="aranan" placeholder="Makale Adı" />
+                            <span class="input-group-btn">
+                                <button class="btn btn-danger" type="submit" >
+                                    <span class=" glyphicon glyphicon-search"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div><br />
+        <div class="row">
+
+            @if (ara != null)
+            {
+
+                <table class="table table-striped" style="border:2px groove;border-radius:10px;">
+                    <tr style="font-size:19px;">
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.Kategori.KategoriAdi)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Baslik)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Icerik)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.BegenilmeSayisi)
+                        </th>
+                        <th></th>
+                    </tr>
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => ara.Kategori.KategoriAdi)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => ara.Baslik)
+                            </td>
+                            <td>
+                                @(ara.Icerik.Substring(0, 70) + " . . . ")
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => ara.BegenilmeSayisi)
+                            </td>
+                            <td>
+                                <a href="/Makale/Details/@ara.ID" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-list"></span> Detayları</a> &nbsp;
+                                <a href="/Makale/Delete/@ara.ID" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span> Sil</a> &nbsp;
+                                <button type="button" class="btn btn-success btn-sm" data-makale-id="@ara.ID" data-toggle="modal" data-target="#modal_yorum"><i class="fa fa-comment"></i> Yorumlar</button>
+
+                            </td>
+                        </tr>
+
+                </table>
+            }
+            else
+            {
+                if (ViewBag.mesaj != null)
+                {
+                    <h2 style="color:red;">@ViewBag.mesaj</h2>
+                }
+                else
+                {
+                    <table class="table table-striped" style="border:2px groove;border-radius:10px;">
+                        <tr style="font-size:19px;">
+
+                            <th>
+                                @Html.DisplayNameFor(model => model.Kategori.KategoriAdi)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Baslik)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Icerik)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.BegenilmeSayisi)
+                            </th>
+                            <th></th>
+                        </tr>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Kategori.KategoriAdi)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Baslik)
+                                </td>
+                                <td>
+                                    @(item.Icerik.Substring(0, 70) + " . . . ")
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.BegenilmeSayisi)
+                                </td>
+                                <td>
+                                    <a href="/Makale/Details/@item.ID" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-list"></span> Detayları</a> &nbsp;
+                                    <a href="/Makale/Delete/@item.ID" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span> Sil</a> &nbsp;
+                                    <button type="button" class="btn btn-success btn-sm" data-makale-id="@item.ID" data-toggle="modal" data-target="#modal_yorum"><i class="fa fa-comment"></i> Yorumlar</button>
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+                }
+
+
+            }
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    var makaleid = -1;
+    var modalCommentBodyId = "#myModal_Body";
+
+    $(function () {
+
+        $('#modal_yorum').on('show.bs.modal', function (e) {
+
+            var btn = $(e.relatedTarget);
+            makaleid = btn.data("makale-id");
+
+            $(modalCommentBodyId).load("/MakaleninYorumu/Index/" + makaleid);
+        })
+
+    });
+</script>
+
+<div class="modal fade" id="modal_yorum" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" id="myModal_Header">
+                <h5 class="modal-title" id="exampleModalLabel">Yorumlar</h5>
+            </div>
+
+            <div class="modal-body" id="myModal_Body">
+
+            </div>
+
+            <div class="modal-footer" id="myModal_Footer">
+                <button type="button" class="btn btn-primary btn-md" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,12 @@
+C:\Users\Harun\source\repos\SoranmakaleSolution\Soranmakale.Core\bin\Debug\Soranmakale.Core.dll
+C:\Users\Harun\source\repos\SoranmakaleSolution\Soranmakale.Core\bin\Debug\Soranmakale.Core.pdb
+C:\Users\Harun\source\repos\SoranmakaleSolution\Soranmakale.Core\obj\Debug\Soranmakale.Core.csprojResolveAssemblyReference.cache
+C:\Users\Harun\source\repos\SoranmakaleSolution\Soranmakale.Core\obj\Debug\Soranmakale.Core.csproj.CoreCompileInputs.cache
+C:\Users\Harun\source\repos\SoranmakaleSolution\Soranmakale.Core\obj\Debug\Soranmakale.Core.dll
+C:\Users\Harun\source\repos\SoranmakaleSolution\Soranmakale.Core\obj\Debug\Soranmakale.Core.pdb
+D:\Harun\source\repos\SoranmakaleSolution\Soranmakale.Core\bin\Debug\Soranmakale.Core.dll
+D:\Harun\source\repos\SoranmakaleSolution\Soranmakale.Core\bin\Debug\Soranmakale.Core.pdb
+D:\Harun\source\repos\SoranmakaleSolution\Soranmakale.Core\obj\Debug\Soranmakale.Core.csprojAssemblyReference.cache
+D:\Harun\source\repos\SoranmakaleSolution\Soranmakale.Core\obj\Debug\Soranmakale.Core.csproj.CoreCompileInputs.cache
+D:\Harun\source\repos\SoranmakaleSolution\Soranmakale.Core\obj\Debug\Soranmakale.Core.dll
+D:\Harun\source\repos\SoranmakaleSolution\Soranmakale.Core\obj\Debug\Soranmakale.Core.pdb

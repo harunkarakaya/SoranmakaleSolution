@@ -1,0 +1,24 @@
+﻿.row {
+    margin-top: 10px;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.panel-heading div {
+    margin-top: -18px;
+    font-size: 15px;
+}
+
+    .panel-heading div span {
+    }
+
+.panel-body {
+    display: none;
+}
+
+.panel-primary {
+    margin-left: 15px;
+    margin-right: -5px;
+}

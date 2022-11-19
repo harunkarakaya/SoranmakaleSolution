@@ -1,0 +1,55 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clean Login Form a Flat Responsive Widget Template :: w3layouts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="Clean Login Form Responsive, Login Form Web Template, Flat Pricing Tables, Flat Drop-Downs, Sign-Up Web Templates, Flat Web Templates, Login Sign-up Responsive Web Template, Smartphone Compatible Web Template, Free Web Designs for Nokia, Samsung, LG, Sony Ericsson, Motorola Web Design" />
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+    <!-- css dosyaları -->
+    <link href="~/Content/Login-Register/css/style.css" rel="stylesheet" />
+    <link href="~/Content/Login-Register/css/Login-write.css" rel="stylesheet" />
+    <link href="~/Content/Login-Register/css/font-awesome.min.css" rel="stylesheet" />
+
+</head>
+
+
+
+<body>
+    @using (Html.BeginForm("Login", "Home"))
+    {
+        <div class="container demo-1">
+            <div class="content">
+                <div id="large-header" class="large-header">
+                    <h1><a href="/Home/YeniIcerikler" style="color:white">SORANMAKALE</a></h1>
+                    <div class="main-agileits">
+                        <h1 style="color:lawngreen;text-align:center;"><i class="fa fa-check" style="font-size:45px;"></i> Kayıt Başarılı</h1>
+
+                    </div>
+                    <div class="copyright w3-agile">
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+
+</body>
+</html>
+
+
+<script>
+
+        $(function () {
+
+            setTimeout(function () {
+                window.location = "/Home/YeniIcerikler";
+            }, 2000);
+        });
+</script>
